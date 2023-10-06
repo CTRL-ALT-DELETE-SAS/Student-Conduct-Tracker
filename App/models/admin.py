@@ -1,0 +1,80 @@
+from App.database import db
+from .student import Student
+from .staff import Staff
+from .user import User
+
+class Admin(User):
+	adminID= db.Column(db.Integer, primary_key= True)
+
+	def __init__(self, firstname, lastname, password):
+		super().__init__(firstname, lastname, password)
+
+	def get_id(self):
+		return self.adminID
+
+	#add student to the database
+	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
+
+		student = Student.query.filter_by(studentID=id).first()
+		staff = Student.query.filter_by(studentID=id).first()
+
+		if not student and not staff:
+			newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
+			
+			db.session.add(newStudent)
+			db.session.commit()  # Commit to save the new student to the database
+			return newStudent 
+
+		return None #id already exists
+
+# add staff to the database
+	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
+
+		student = Student.query.filter_by(studentID=id).first()
+		staff = Student.query.filter_by(studentID=id).first()
+
+		if not student and not staff:
+			newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
+			
+			db.session.add(newStaff)
+			db.session.commit()  # Commit to save the new staff to the database
+			return newStaff
+		
+		return None #id already exists
+
+
+	#takes a studentID, string for field_to_update and new_value . Updates the  relative field for the student
+	def updateStudent(self, studentID, field_to_update, new_value):
+		# List of fields that can be updated for a student record
+		allowed_fields = ["studentid", "contact", "firstname", "lastname", "password", "studenttype", "yearofstudy"]
+
+		# Normalize the input field name by converting it to lowercase and replacing '-', '_', ' ' with ''
+		input_field = field_to_update.lower().replace('-', '').replace('_', '').replace(' ', '')
+
+	# Retrieve the student record based on student id
+		student = Student.query.filter_by(studentID=studentID).first()
+
+		if student is None:
+			return "Student not found"
+
+		# Check if the specified field exists in the Student model, change column names on model to lowercase so that it could be compared to the normalized input
+		found_field = None
+		for field in Student.__table__.columns.keys():
+			if field.lower() == input_field:
+				found_field = field
+				break
+
+		if found_field is None:
+			return f"Field '{field_to_update}' does not exist for Student"
+
+		# Check if the specified field is in the list of editable fields
+		if input_field not in allowed_fields:
+			return f"Field '{field_to_update}' cannot be updated for Student"
+
+		# Update the specified field with the new value
+		setattr(student, found_field, new_value)
+
+		# Commit to save the changes
+		db.session.add(student)
+		db.session.commit()
+		return True
