@@ -54,14 +54,12 @@ def is_admin(id):
   def get_all_staff():
     return Staff.query.all()
 
-#def get_user(id):
-#    return User.query.get(id)
-
-#def update_user(id, username):
-#    user = get_user(id)
-#    if user:
-#        user.username = username
-#        db.session.add(user)
-#        return db.session.commit()
-#    return None
-    
+def update_student(studentID, contact, studentType, yearOfStudy):
+    student = get_student(studentID)
+    if student:
+        student.contact = contact
+        student.studentType = studentType
+        student.yearOfStudy = yearOfStudy
+        db.session.add(student)
+        return db.session.commit()
+    return None
