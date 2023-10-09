@@ -54,26 +54,6 @@ def login_student(password, studentID):
         return func(*args, **kwargs)
     return wrapper
 
-  def get_all_students_json():
-    students = Student.query.all()
-    if not student:
-      return []
-    students= [student.toDict() for student in students]
-    return students
-
-  def get_all_staff_json():
-    staffmembers = Staff.query.all()
-    if not staff:
-      return []
-    staffmembers= [staff.toDict() for staff in staffmembers]
-    return staffmembers
-
-  def get_all_students():
-    return Student.query.all()
-
-  def get_all_staff():
-    return Staff.query.all()
-
 def setup_flask_login(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
