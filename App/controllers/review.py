@@ -13,3 +13,9 @@ def delete_review(staffID, reviewID):
   if review and staff:
     return staff.delete_review(review)
   return False
+
+def edit_review(staffID, reviewID):
+  staff= Staff.query.get(staffID)
+  review = Review.query.get(reviewID)
+  if review and staff:
+    
