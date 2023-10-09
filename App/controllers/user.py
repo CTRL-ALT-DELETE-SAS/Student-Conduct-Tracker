@@ -1,33 +1,67 @@
-from App.models import User
+from App.models import User, Staff, Student, Admin
 from App.database import db
 
-def create_user(username, password):
-    newuser = User(username=username, password=password)
-    db.session.add(newuser)
+def create_student(firstName, lastName, password, studentID, contact, studentType, yearOfStudy):
+    newstudent = Student(firstName=firstName, lastName, password=password, studentID=studentID, contact=contact, studentType=studentType, yearOfStudy=yearOfStudy)
+    db.session.add(newstudent)
     db.session.commit()
-    return newuser
+    return newstudent
 
-def get_user_by_username(username):
-    return User.query.filter_by(username=username).first()
+def create_staff(firstName, lastName, password, staffID, email, teachingExperience):
+    newstaff = Student(firstName=firstName, lastName, password=password, staffID=staffID, email=email, teachingExperience=teachingExperience)
+    db.session.add(newstaff)
+    db.session.commit()
+    return newstaff
 
-def get_user(id):
-    return User.query.get(id)
+def create_admin(firstName, lastName, password, aminID):
+    newadmin = Admin(firstName=firstName, lastName=lastName, password=password, adminID=adminID)
+    db.session.add(nreadmin)
+    db.session.commit()
+    return newadmin
 
-def get_all_users():
-    return User.query.all()
+def get_staff(id):
+    return Staff.query.get(id)
 
-def get_all_users_json():
-    users = User.query.all()
-    if not users:
-        return []
-    users = [user.get_json() for user in users]
-    return users
+def get_student(id):
+    return Student.query.get(id)
 
-def update_user(id, username):
-    user = get_user(id)
-    if user:
-        user.username = username
-        db.session.add(user)
-        return db.session.commit()
-    return None
+def is_staff(id):
+    return Staff.query.get(id) != None
+
+def is_student(id):
+    return Student.query.get(id) != None
+
+def is_admin(id):
+    return Admin.query.get)(id) != None
+
+ def get_all_students_json():
+    students = Student.query.all()
+    if not student:
+      return []
+    students= [student.toDict() for student in students]
+    return students
+
+  def get_all_staff_json():
+    staffmembers = Staff.query.all()
+    if not staff:
+      return []
+    staffmembers= [staff.toDict() for staff in staffmembers]
+    return staffmembers
+
+  def get_all_students():
+    return Student.query.all()
+
+  def get_all_staff():
+    return Staff.query.all()
+
+#def get_user(id):
+#    return User.query.get(id)
+
+#def update_user(id, username):
+#    user = get_user(id)
+#    if user:
+#        user.username = username
+#        db.session.add(user)
+#        return db.session.commit()
+#    return None
     
