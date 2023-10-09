@@ -16,7 +16,7 @@ class Admin(User):
 	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
 
 		student = Student.query.filter_by(studentID=id).first()
-		staff = Student.query.filter_by(studentID=id).first()
+		staff = Staff.query.filter_by(staffID=id).first()
 
 		if not student and not staff:
 			newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
@@ -31,7 +31,7 @@ class Admin(User):
 	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
 
 		student = Student.query.filter_by(studentID=id).first()
-		staff = Student.query.filter_by(studentID=id).first()
+		staff = Staff.query.filter_by(staffID=id).first()
 
 		if not student and not staff:
 			newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
