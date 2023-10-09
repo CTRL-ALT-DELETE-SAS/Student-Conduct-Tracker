@@ -7,15 +7,19 @@ def get_reviews_by_student(studentID):
 def get_reviews_by_staff(staffID):
   return Review.query.filter_by(staffID=staffID).all()
 
-def delete_review(staffID, reviewID):
-  staff= Staff.query.get(staffID)
-  review = Review.query.get(reviewID)
-  if review and staff:
-    return staff.delete_review(review)
-  return False
+def editReview(self, staff, isPositive, comment):
+    if self.reviewer == staff:
+      self.isPositive = isPositive
+      self.comment = comment
+      db.session.add(self)
+      db.session.commit()
+      return True
+    return None
 
-def edit_review(staffID, reviewID):
-  staff= Staff.query.get(staffID)
-  review = Review.query.get(reviewID)
-  if review and staff:
+  def deleteReview(self, staff):
+    if self.reviewer == staff:
+      db.session.delete(self)
+      db.session.commit()
+      return True
+    return None
     
