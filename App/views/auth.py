@@ -7,7 +7,7 @@ from App.controllers.auth import (
     authenticate
 )
 
-app = Flask('auth_views', __name__, template_folder='../templates')
+auth_views = Flask('auth_views', __name__, template_folder='../templates')
 app.secret_key = '6ZN40RI0iq'
 
 login_manager = LoginManager()
@@ -18,7 +18,7 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 #Define route for Login 
-@app.route('/login', methods=['GET', 'POST'])
+@auth_views.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         firstname = request.form['firstname']
@@ -37,7 +37,7 @@ def login():
     return render_template('login.html')
 
 # Define route for logout
-@app.route('/logout')
+@auth_views.route('/logout')
 @login_required
 def logout():
     logout_user()
