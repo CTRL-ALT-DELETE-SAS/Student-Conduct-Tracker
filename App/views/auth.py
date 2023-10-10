@@ -11,7 +11,7 @@ auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 app.secret_key = '6ZN40RI0iq'
 
 login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(auth_views)
 
 @login_manager.user_loader
 def load_user(user_id):
