@@ -4,7 +4,7 @@ from App.controllers import User
 from flask_jwt import JWT
 
 from App.controllers.auth import (
-    authenticate,
+    authenticate
 )
 
 app = Flask('auth_views', __name__, template_folder='../templates')
