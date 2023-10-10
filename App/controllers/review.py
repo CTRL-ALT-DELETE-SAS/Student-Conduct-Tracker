@@ -1,25 +1,28 @@
 from App.models import Review, Staff, Student
 from App.database import db
 
+
 def get_reviews_by_student(studentID):
-  return Review.query.filter_by(studentID=studentID).all()
+    return Review.query.filter_by(studentID=studentID).all()
+
 
 def get_reviews_by_staff(staffID):
-  return Review.query.filter_by(staffID=staffID).all()
+    return Review.query.filter_by(reviewerID=staffID).all()
 
-def editReview(self, staff, isPositive, comment):
-    if self.reviewer == staff:
-      self.isPositive = isPositive
-      self.comment = comment
-      db.session.add(self)
-      db.session.commit()
-      return True
+
+def edit_review(review, staff, is_positive, comment):
+    if review.reviewer == staff:
+        review.isPositive = is_positive
+        review.comment = comment
+        db.session.add(review)
+        db.session.commit()
+        return True
     return None
 
-  def deleteReview(self, staff):
-    if self.reviewer == staff:
-      db.session.delete(self)
-      db.session.commit()
-      return True
+
+def delete_review(review, staff):
+    if review.reviewer == staff:
+        db.session.delete(review)
+        db.session.commit()
+        return True
     return None
-    

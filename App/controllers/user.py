@@ -1,65 +1,82 @@
 from App.models import User, Staff, Student, Admin
 from App.database import db
 
-def create_student(firstName, lastName, password, studentID, contact, studentType, yearOfStudy):
-    newstudent = Student(firstName=firstName, lastName, password=password, studentID=studentID, contact=contact, studentType=studentType, yearOfStudy=yearOfStudy)
-    db.session.add(newstudent)
-    db.session.commit()
-    return newstudent
 
-def create_staff(firstName, lastName, password, staffID, email, teachingExperience):
-    newstaff = Student(firstName=firstName, lastName, password=password, staffID=staffID, email=email, teachingExperience=teachingExperience)
-    db.session.add(newstaff)
+def create_student(firstname, lastname, password, id, contact, studentType, yearofStudy):
+    new_student = Student(firstname=firstname, lastname=lastname, password=password,
+                          id=id, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
+    db.session.add(new_student)
     db.session.commit()
-    return newstaff
+    return new_student
 
-def create_admin(firstName, lastName, password, aminID):
-    newadmin = Admin(firstName=firstName, lastName=lastName, password=password, adminID=adminID)
-    db.session.add(nreadmin)
+
+def create_staff(firstname, lastname, password, id, email, teachingExperience):
+    new_staff = Staff(firstname=firstname, lastname=lastname, password=password,
+                      id=id, email=email, teachingExperience=teachingExperience)
+    db.session.add(new_staff)
     db.session.commit()
-    return newadmin
+    return new_staff
+
+
+def create_admin(firstname, lastname, password):
+    new_admin = Admin(firstname=firstname,
+                      lastname=lastname, password=password)
+    db.session.add(new_admin)
+    db.session.commit()
+    return new_admin
+
 
 def get_staff(id):
     return Staff.query.get(id)
 
+
 def get_student(id):
     return Student.query.get(id)
 
+
 def is_staff(id):
-    return Staff.query.get(id) != None
+    return Staff.query.get(id) is not None
+
 
 def is_student(id):
-    return Student.query.get(id) != None
+    return Student.query.get(id) is not None
+
 
 def is_admin(id):
-    return Admin.query.get)(id) != None
+    return Admin.query.get(id) is not None
 
- def get_all_students_json():
+
+def get_all_students_json():
     students = Student.query.all()
-    if not student:
-      return []
-    students= [student.toDict() for student in students]
+    if not students:
+        return []
+    students = [student.to_json() for student in students]
     return students
 
-  def get_all_staff_json():
-    staffmembers = Staff.query.all()
-    if not staff:
-      return []
-    staffmembers= [staff.toDict() for staff in staffmembers]
-    return staffmembers
 
-  def get_all_students():
+def get_all_staff_json():
+    staff_members = Staff.query.all()
+    if not staff_members:
+        return []
+    staff_members = [staff.to_json() for staff in staff_members]
+    return staff_members
+
+
+def get_all_students():
     return Student.query.all()
 
-  def get_all_staff():
+
+def get_all_staff():
     return Staff.query.all()
 
-def update_student(studentID, contact, studentType, yearOfStudy):
-    student = get_student(studentID)
+
+def update_student(id, contact, studentType, yearofStudy):
+    student = get_student(id)
     if student:
         student.contact = contact
         student.studentType = studentType
-        student.yearOfStudy = yearOfStudy
+        student.yearofStudy = yearofStudy
         db.session.add(student)
-        return db.session.commit()
+        db.session.commit()
+        return student
     return None
