@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from App.controllers.user import (
     create_student,
     create_staff,
-    create_admin,
+    create_user,
     get_staff,
     get_student,
     is_staff,
@@ -78,7 +78,7 @@ def create_admin_route():
         if not firstname or not lastname or not password:
             return "Invalid request data", 400
 
-        admin = create_admin(firstname, lastname, password)
+        admin = create_user(firstname, lastname, password)
         return jsonify(admin.to_json()), 201
     else:
         return "Unauthorized to create an admin", 401

@@ -18,7 +18,7 @@ def create_staff(firstname, lastname, password, id, email, teachingExperience):
     return new_staff
 
 
-def create_admin(firstname, lastname, password):
+def create_user(firstname, lastname, password):
     new_admin = Admin(firstname=firstname,
                       lastname=lastname, password=password)
     db.session.add(new_admin)
@@ -45,6 +45,10 @@ def is_student(id):
 def is_admin(id):
     return Admin.query.get(id) is not None
 
+def get_all_users_json():
+    users = User.query.all()
+    users = [user.to_json() for user in users]
+    return users
 
 def get_all_students_json():
     students = Student.query.all()
@@ -61,6 +65,8 @@ def get_all_staff_json():
     staff_members = [staff.to_json() for staff in staff_members]
     return staff_members
 
+def get_all_users():
+    return User.query.all()
 
 def get_all_students():
     return Student.query.all()

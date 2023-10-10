@@ -2,6 +2,8 @@ from functools import wraps
 from flask_login import current_user, LoginManager
 from flask_jwt import JWT
 
+
+
 from App.models import User, Staff, Student, Admin
 
 
