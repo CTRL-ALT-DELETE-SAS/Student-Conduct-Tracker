@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from App.controllers import User
 from flask_jwt import JWT
