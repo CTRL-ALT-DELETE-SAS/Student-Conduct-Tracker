@@ -13,5 +13,6 @@ psycopg2-binary==2.9.3
 pytest==7.0.1
 python-dotenv==0.21.1
 Flask-JWT-Extended==4.4.4
+flask-jwt==0.3.2
 Flask-Migrate==3.1.0
 Werkzeug==2.2.2
