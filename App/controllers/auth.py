@@ -16,7 +16,7 @@ def authenticate(firstname, lastname, password):
         return student
     admin = Admin.query.filter_by(
         firstname=firstname, lastname=lastname).first()
-    if Admin and admin.check_password(password):
+    if admin and admin.check_password(password):
         return admin
     return None
 
@@ -85,4 +85,4 @@ def user_identity_lookup(identity):
 
 def user_lookup_callback(_jwt_header, jwt_data):
     identification = jwt_data["sub"]
-    return User.query.get(identification)
+    return str(identification)

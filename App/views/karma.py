@@ -9,8 +9,10 @@ from App.controllers.karma import (
     update_student_karma_rankings,
 )
 
+# Create a Blueprint for karma views
 karma_views = Blueprint("karma_views", __name__, template_folder='../templates')
 
+# Route to get Karma by ID
 @karma_views.route("/karma/<int:karma_id>", methods=["GET"])
 @jwt_required()
 def get_karma(karma_id):
@@ -20,18 +22,19 @@ def get_karma(karma_id):
     else:
         return "Karma not found", 404
 
-
+# Route to calculate Karma for a specific student
 @karma_views.route("/karma/calculate/<int:student_id>", methods=["POST"])
 @jwt_required()
 def calculate_student_karma_route(student_id):
     student = Student.query.get(student_id)
     if student:
         karma = calculate_student_karma(student)
+        update_student_karma_rankings()
         return jsonify(karma.to_json()), 200
     else:
         return "Student not found", 404
 
-
+# Route to update Karma rankings for all students
 @karma_views.route("/karma/update_rankings", methods=["POST"])
 def update_karma_rankings_route():
     update_student_karma_rankings()

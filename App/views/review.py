@@ -10,10 +10,10 @@ from App.controllers.review import (
     delete_review,
 )
 
-from App.database import db
-
+# Create a Blueprint for Review views
 review_views = Blueprint("review_views", __name__, template_folder='../templates')
 
+# Route to get reviews by student ID
 @review_views.route("/reviews/student/<string:student_id>", methods=["GET"])
 @jwt_required()
 def get_reviews_for_student(student_id):
@@ -23,6 +23,7 @@ def get_reviews_for_student(student_id):
     else:
         return "No reviews found for the student", 404
 
+# Route to get reviews by staff ID
 @review_views.route("/reviews/staff/<string:staff_id>", methods=["GET"])
 @jwt_required()
 def get_reviews_from_staff(staff_id):
@@ -32,6 +33,7 @@ def get_reviews_from_staff(staff_id):
     else:
         return "No reviews found by the staff member", 404
 
+# Route to edit a review
 @review_views.route("/reviews/edit/<int:review_id>", methods=["PUT"])
 @jwt_required()
 def review_edit(review_id):
@@ -44,15 +46,14 @@ def review_edit(review_id):
         is_positive = data.get("isPositive")
         comment = data.get("comment")
         if is_positive is not None and comment is not None:
-            review.isPositive = is_positive
-            review.comment = comment
-            db.session.commit()
+            edit_review(review, current_user, is_positive, comment)
             return jsonify(review.to_json()), 200
         else:
             return "Invalid request data", 400
     else:
         return "Unauthorized to edit this review", 401
 
+# Route to delete a review
 @review_views.route("/reviews/delete/<int:review_id>", methods=["DELETE"])
 def review_delete(review_id):
     review = Review.query.get(review_id)
@@ -60,8 +61,7 @@ def review_delete(review_id):
         return "Review not found", 404
 
     if current_user.is_authenticated and current_user == review.reviewer:
-        db.session.delete(review)
-        db.session.commit()
+        delete_review(review, current_user)
         return "Review deleted successfully", 200
     else:
         return "Unauthorized to delete this review", 401
