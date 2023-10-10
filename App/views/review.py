@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, redirect, render_template, request, abort, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import current_user
 from App.controllers import Review
@@ -8,10 +8,36 @@ from App.controllers.review import (
     get_reviews_by_staff,
     edit_review,
     delete_review,
+    upvoteReview,
+    downvoteReview,
 )
 
 # Create a Blueprint for Review views
 review_views = Blueprint("review_views", __name__, template_folder='../templates')
+
+# Route to list all reviews (you can customize this route as needed)
+@review_views.route('/reviews')
+@jwt_required()
+def list_reviews():
+    reviews = Review.query.all()
+    return jsonify([review.to_json() for review in reviews]), 200
+
+# Route to view a specific review and vote on it
+@review_views.route('/review/<int:review_id>', methods=['GET', 'POST'])
+@jwt_required()
+def view_review(review_id):
+    review = Review.query.get(review_id)
+
+    if request.method == 'POST':
+        if 'upvote' in request.form:
+            upvoteReview(review_id, current_user)
+        elif 'downvote' in request.form:
+            downvoteReview(review_id, current_user) 
+
+        # Redirect back to the review after voting
+        return redirect(url_for('view_review', review_id=review_id))
+
+    return render_template('view_review.html', review=review)
 
 # Route to get reviews by student ID
 @review_views.route("/reviews/student/<string:student_id>", methods=["GET"])
@@ -55,6 +81,7 @@ def review_edit(review_id):
 
 # Route to delete a review
 @review_views.route("/reviews/delete/<int:review_id>", methods=["DELETE"])
+@jwt_required()
 def review_delete(review_id):
     review = Review.query.get(review_id)
     if not review:
