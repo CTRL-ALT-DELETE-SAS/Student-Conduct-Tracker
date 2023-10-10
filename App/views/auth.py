@@ -1,12 +1,14 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from App.controllers import User
+from flask_jwt import JWT
 
 from App.controllers.auth import (
-    authenticate,
+    authenticate
 )
 
-auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
+app = Flask('auth_views', __name__, template_folder='../templates')
+app.secret_key = '6ZN40RI0iq'
 
 login_manager = LoginManager()
 login_manager.init_app(auth_views)
