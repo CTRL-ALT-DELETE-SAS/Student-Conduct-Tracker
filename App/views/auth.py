@@ -7,7 +7,7 @@ from App.controllers.auth import (
     authenticate
 )
 
-auth_views = Flask('auth_views', __name__, template_folder='../templates')
+auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 app.secret_key = '6ZN40RI0iq'
 
 login_manager = LoginManager()
