@@ -33,14 +33,14 @@ def get_users_action():
 @user_views.route('/api/users', methods=['POST'])
 def create_user_endpoint():
     data = request.json
-    create_user(data['firstname'], data['lastname'], data['password'])
+    user= create_user(data['firstname'], data['lastname'], data['password'])
     return jsonify({'message': f"user {data['firstname']} created"})
 
 @user_views.route('/users', methods=['POST'])
 def create_user_action():
     data = request.form
     flash(f"User {data['firstname']} created!")
-    create_user(data['firstname'], data['lastname'], data['password'])
+    user= create_user(data['firstname'], data['lastname'], data['password'])
     return redirect(url_for('user_views.get_user_page'))
 
 @user_views.route('/static/users', methods=['GET'])
@@ -96,21 +96,17 @@ def create_staff_action():
 
 # Route to create a new admin
 @user_views.route("/user/create_admin", methods=["POST"])
-@login_required
 def create_admin_action():
-    if current_user.is_admin:
-        data = request.get_json()
-        firstname = data.get("firstname")
-        lastname = data.get("lastname")
-        password = data.get("password")
+    data = request.get_json()
+    firstname = data.get("firstname")
+    lastname = data.get("lastname")
+    password = data.get("password")
 
-        if not firstname or not lastname or not password:
-            return "Invalid request data", 400
+    if not firstname or not lastname or not password:
+        return "Invalid request data", 400
 
-        admin = create_user(firstname, lastname, password)
-        return jsonify(admin.to_json()), 201
-    else:
-        return "Unauthorized to create an admin", 401
+    admin = create_user(firstname, lastname, password)
+    return jsonify(admin.to_json()), 201
 
 # Route to get a staff member by ID
 @user_views.route("/user/staff/<string:id>", methods=["GET"])
