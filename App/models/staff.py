@@ -7,25 +7,25 @@ from .review import Review
 
 class Staff(User):
   __tablename__ = 'staff'
-  staffID = db.Column(db.String(10), primary_key=True)
+  ID = db.Column(db.String(10), primary_key=True)
   email = db.Column(db.String(120), nullable=False)
   teachingExperience = db.Column(db.Integer, nullable=False)
 
-  def __init__(self, id, firstname, lastname, password, email,
+  def __init__(self, staffID, firstname, lastname, password, email,
                teachingExperience):
     super().__init__(firstname, lastname, password)
-    self.staffID = id
+    self.ID = staffID
     self.email = email
     self.teachingExperience = teachingExperience
 
   def get_id(self):
-    return self.staffID
+    return self.ID
 
 #return staff details on json format
 
   def to_json(self):
     return {
-        "staffID": self.staffID,
+        "staffID": self.ID,
         "firstname": self.firstname,
         "lastname": self.lastname,
         "email": self.email,
@@ -50,7 +50,7 @@ class Staff(User):
   def searchStudent(self, searchTerm):
     # Query the Student model for a student by ID or first name, or last name
     students = db.session.query(Student).filter(
-        (Student.studentID == searchTerm)
+        (Student.ID == searchTerm)
         |  #studentID must be exact match (string)
         (Student.firstname.ilike(f"%{searchTerm}%"))
         |  # Search by firstname or lastname - case-insensitive
@@ -75,7 +75,7 @@ class Staff(User):
     if students:
       # If students with rankings are found, return a list of their JSON representations
       student_rankings = [{
-          "studentID": student.Student.studentID,
+          "studentID": student.Student.ID,
           "firstname": student.Student.firstname,
           "lastname": student.Student.lastname,
           "karmaScore": student.Karma.score,

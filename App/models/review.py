@@ -7,13 +7,13 @@ from .karma import Karma
 review_staff_upvoters = db.Table(
     'review_staff_upvoters',
     db.Column('reviewID', db.Integer, db.ForeignKey('review.reviewID')),
-    db.Column('staffID', db.Integer, db.ForeignKey('staff.staffID')),
+    db.Column('staffID', db.Integer, db.ForeignKey('staff.ID')),
 )
 
 review_staff_downvoters = db.Table(
     'review_staff_downvoters',
     db.Column('reviewID', db.Integer, db.ForeignKey('review.reviewID')),
-    db.Column('staffID', db.Integer, db.ForeignKey('staff.staffID')),
+    db.Column('staffID', db.Integer, db.ForeignKey('staff.ID')),
 )
 
 
@@ -22,7 +22,7 @@ class Review(db.Model):
   reviewID = db.Column(db.Integer, primary_key=True)
   reviewerID = db.Column(
       db.String(10),
-      db.ForeignKey('staff.staffID'))  #each review has 1 creator
+      db.ForeignKey('staff.ID'))  #each review has 1 creator
 
   #create reverse relationship from Staff back to Review to access reviews created by a specific staff member
   reviewer = db.relationship('Staff',
@@ -30,7 +30,7 @@ class Review(db.Model):
                                                 lazy='joined'),
                              foreign_keys=[reviewerID])
 
-  studentID = db.Column(db.String(10), db.ForeignKey('student.studentID'))
+  studentID = db.Column(db.String(10), db.ForeignKey('student.ID'))
 
   staffUpvoters = db.relationship(
       'Staff',
@@ -54,9 +54,9 @@ class Review(db.Model):
 
   # initialize the review. when it is created the date is automatically gotten and votes are at 0
   def __init__(self, reviewer, student, isPositive, comment):
-    self.reviewerID = reviewer.staffID
+    self.reviewerID = reviewer.ID
     self.reviewer = reviewer
-    self.studentID = student.studentID
+    self.studentID = student.ID
     self.isPositive = isPositive
     self.comment = comment
     self.upvotes = 0
@@ -105,7 +105,7 @@ class Review(db.Model):
       db.session.commit()
 
       # Retrieve the associated Student object using studentID
-      student = Student.query.get(self.studentID)
+      student = Student.query.get(self.ID)
 
       # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
       if student.karmaID is None:
@@ -140,7 +140,7 @@ class Review(db.Model):
       db.session.add(self)
       db.session.commit()
       # Retrieve the associated Student object using studentID
-      student = Student.query.get(self.studentID)
+      student = Student.query.get(self.ID)
 
       # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
       if student.karmaID is None:
@@ -163,7 +163,7 @@ class Review(db.Model):
     return {
         "reviewID": self.reviewID,
         "reviewer": self.reviewer.firstname + " " + self.reviewer.lastname,
-        "studentID": self.student.studentID,
+        "studentID": self.student.ID,
         "studentName": self.student.firstname + " " + self.student.lastname,
         "created":
         self.created.strftime("%d-%m-%Y %H:%M"),  #format the date/time

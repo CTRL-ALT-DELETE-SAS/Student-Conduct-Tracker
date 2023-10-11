@@ -20,7 +20,6 @@ class Karma(db.Model):
   def calculateScore(self, student):
     goodKarma = 0
     badKarma = 0
-    score = 0
 
     # Iterate through reviews associated with the student
     for review in student.reviews:

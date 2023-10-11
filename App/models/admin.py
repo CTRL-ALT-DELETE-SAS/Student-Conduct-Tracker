@@ -4,19 +4,20 @@ from .staff import Staff
 from .user import User
 
 class Admin(User):
-	adminID= db.Column(db.Integer, primary_key= True)
+	ID= db.Column(db.Integer, primary_key= True)
 
 	def __init__(self, firstname, lastname, password):
 		super().__init__(firstname, lastname, password)
+		self.ID = 1
 
 	def get_id(self):
-		return self.adminID
+		return self.ID
 
 	#add student to the database
 	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
 
-		student = Student.query.filter_by(studentID=id).first()
-		staff = Staff.query.filter_by(staffID=id).first()
+		student = Student.query.filter_by(ID=id).first()
+		staff = Staff.query.filter_by(ID=id).first()
 
 		if not student and not staff:
 			newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
@@ -30,8 +31,8 @@ class Admin(User):
 # add staff to the database
 	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
 
-		student = Student.query.filter_by(studentID=id).first()
-		staff = Staff.query.filter_by(staffID=id).first()
+		student = Student.query.filter_by(ID=id).first()
+		staff = Staff.query.filter_by(ID=id).first()
 
 		if not student and not staff:
 			newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
@@ -46,13 +47,13 @@ class Admin(User):
 	#takes a studentID, string for field_to_update and new_value . Updates the  relative field for the student
 	def updateStudent(self, studentID, field_to_update, new_value):
 		# List of fields that can be updated for a student record
-		allowed_fields = ["studentid", "contact", "firstname", "lastname", "password", "studenttype", "yearofstudy"]
+		allowed_fields = ["studentID", "contact", "firstname", "lastname", "password", "studenttype", "yearofstudy"]
 
 		# Normalize the input field name by converting it to lowercase and replacing '-', '_', ' ' with ''
 		input_field = field_to_update.lower().replace('-', '').replace('_', '').replace(' ', '')
 
 	# Retrieve the student record based on student id
-		student = Student.query.filter_by(studentID=studentID).first()
+		student = Student.query.filter_by(ID=studentID).first()
 
 		if student is None:
 			return "Student not found"

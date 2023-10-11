@@ -4,7 +4,7 @@ from .user import User
 
 class Student(User):
 	__tablename__ = 'student'
-	studentID = db.Column(db.String(10), primary_key=True)
+	ID = db.Column(db.String(10), primary_key=True)
 	contact = db.Column(db.String(30), nullable=False)
 	studentType = db.Column(db.String(30))  #full-time, part-time or evening
 	yearOfStudy = db.Column(db.Integer, nullable=False)
@@ -12,22 +12,22 @@ class Student(User):
 	karmaID = db.Column(db.Integer, db.ForeignKey('karma.karmaID'))
 
   #When student is newly created there would be no reviews or karma yet
-	def __init__(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
+	def __init__(self, studentID, firstname, lastname, password, contact, studentType, yearofStudy):
 		super().__init__(firstname, lastname, password)
-		self.studentID = id
+		self.ID = studentID
 		self.contact = contact
 		self.studentType = studentType
 		self.yearOfStudy = yearofStudy
 		self.reviews = []
 	
 	def get_id(self):
-		return self.studentID
+		return self.ID
 
 #Gets the student details and returns in JSON format
 	def to_json(self):
 		karma = self.getKarma()
 		return {
-        "studentID": self.studentID,
+        "studentID": self.ID,
         "firstname": self.firstname,
         "lastname": self.lastname,
         "contact": self.contact,

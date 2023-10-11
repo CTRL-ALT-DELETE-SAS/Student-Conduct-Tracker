@@ -17,7 +17,7 @@ def init():
     db.create_all()
     create_user('bob', 'builder', 'bobpass')
 
-    for ID in  range(0, 50): 
+    for ID in  range(2, 50): 
         create_staff(
             randomname.get_name(), 
             randomname.get_name(), 
@@ -26,8 +26,8 @@ def init():
             randomname.get_name() + '@schooling.com', 
             str(random.randint(1, 15))
         )
-
-    for ID in range(0, 100): 
+        
+    for ID in range(50, 150): 
         create_student(
             randomname.get_name(), 
             randomname.get_name(), 
@@ -37,5 +37,5 @@ def init():
             random.choice(['Full-time','Part-time', 'evening']),
             str(random.randint(1, 8))
         )
-        
+
     return jsonify(message='db initialized!')
