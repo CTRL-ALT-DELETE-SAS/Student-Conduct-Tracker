@@ -2,7 +2,7 @@ from App.models import Karma, Student
 from App.database import db
 
 def get_karma_by_id(karma_id):
-    return Karma.query.get(karma_id)
+    return db.session.query(Karma).get(karma_id)
 
 def calculate_student_karma(student):
     good_karma = 0
@@ -19,7 +19,7 @@ def calculate_student_karma(student):
     karma_score = good_karma - bad_karma
 
     if student.karmaID is not None:
-        karma = Karma.query.get(student.karmaID)
+        karma = db.session.query(Karma).get(student.karmaID)
         karma.score = karma_score
     else:
         karma = Karma(score=karma_score)

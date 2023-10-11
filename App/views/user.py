@@ -3,7 +3,6 @@ from flask_login import current_user, login_required
 from App.controllers.user import (
     create_student,
     create_staff,
-    create_user,
     get_staff,
     get_all_users,
     get_student,
@@ -20,16 +19,19 @@ from App.database import db
 # Create a Blueprint for user views
 user_views = Blueprint("user_views", __name__, template_folder='../templates')
 
+# Route to get page of all users 
 @user_views.route('/users', methods=['GET'])
 def get_user_page():
     users = get_all_users()
     return render_template('users.html', users=users)
 
+# Route to get all users
 @user_views.route('/api/users', methods=['GET'])
 def get_users_action():
     users = get_all_users_json()
     return jsonify(users)
 
+<<<<<<< Updated upstream
 @user_views.route('/api/users', methods=['POST'])
 def create_user_endpoint():
     data = request.json
@@ -43,13 +45,16 @@ def create_user_action():
     user= create_user(data['firstname'], data['lastname'], data['password'])
     return redirect(url_for('user_views.get_user_page'))
 
+=======
+# Route for static users page
+>>>>>>> Stashed changes
 @user_views.route('/static/users', methods=['GET'])
 def static_user_page():
   return send_from_directory('static', 'static-user.html')
 
 # Route to create a new student
 @user_views.route("/user/create_student", methods=["POST"])
-@login_required
+
 def create_student_action():
     if current_user.is_admin:
         data = request.get_json()
@@ -73,7 +78,7 @@ def create_student_action():
 
 # Route to create a new staff member
 @user_views.route("/user/create_staff", methods=["POST"])
-@login_required
+
 def create_staff_action():
     if current_user.is_admin:
         data = request.get_json()
@@ -94,6 +99,7 @@ def create_staff_action():
     else:
         return "Unauthorized to create a staff member", 401
 
+<<<<<<< Updated upstream
 # Route to create a new admin
 @user_views.route("/user/create_admin", methods=["POST"])
 def create_admin_action():
@@ -108,10 +114,12 @@ def create_admin_action():
     admin = create_user(firstname, lastname, password)
     return jsonify(admin.to_json()), 201
 
+=======
+>>>>>>> Stashed changes
 # Route to get a staff member by ID
 @user_views.route("/user/staff/<string:id>", methods=["GET"])
-@login_required
-def get_staff_route(id):
+
+def get_staff_action(id):
     staff = get_staff(id)
     if staff:
         return jsonify(staff.to_json()), 200
@@ -120,7 +128,7 @@ def get_staff_route(id):
 
 # Route to get a student by ID
 @user_views.route("/user/student/<string:id>", methods=["GET"])
-@login_required
+
 def get_student_action(id):
     student = get_student(id)
     if student:
@@ -130,25 +138,25 @@ def get_student_action(id):
 
 # Route to check if a user is a staff member
 @user_views.route("/user/is_staff/<string:id>", methods=["GET"])
-@login_required
+
 def is_staff_action(id):
     return jsonify({"is_staff": is_staff(id)}), 200
 
 # Route to check if a user is a student
 @user_views.route("/user/is_student/<string:id>", methods=["GET"])
-@login_required
+
 def is_student_action(id):
     return jsonify({"is_student": is_student(id)}), 200
 
 # Route to check if a user is an admin
 @user_views.route("/user/is_admin/<string:id>", methods=["GET"])
-@login_required
+
 def is_admin_action(id):
     return jsonify({"is_admin": is_admin(id)}), 200
 
 # Route to get all students
 @user_views.route("/user/students", methods=["GET"])
-@login_required
+
 def get_all_students_action():
     students = get_all_students()
     if students:
@@ -158,7 +166,7 @@ def get_all_students_action():
 
 # Route to get all staff members
 @user_views.route("/user/staff", methods=["GET"])
-@login_required
+
 def get_all_staff_action():
     staff = get_all_staff()
     if staff:
@@ -168,11 +176,9 @@ def get_all_staff_action():
 
 # Route to update a student's information
 @user_views.route("/user/update_student/<string:student_id>", methods=["PUT"])
-@login_required
+
 def update_student_action(student_id):
-    if current_user.is_admin or (
-        current_user.is_staff and current_user.staffID == student_id
-    ):
+    if current_user.is_admin:
         data = request.get_json()
         contact = data.get("contact")
         studentType = data.get("studentType")

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from App.controllers import User
+from App.database import db
 from flask_jwt import JWT
 
 from App.controllers.auth import (
@@ -16,7 +17,7 @@ login_manager.init_app(auth_views)
 @auth_views.route('/login/<string:user_id>', methods=['GET'])
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return db.session.query(User).get(user_id)
 
 #Define route for Login 
 @auth_views.route('/login', methods=['GET', 'POST'])
@@ -31,11 +32,11 @@ def login():
         if user:
             login_user(user)
             flash('Login successful', 'success')
-            return redirect(url_for('/dashboard'))
+            return redirect(url_for('/reviews'))
         else:
             flash('Login failed. Please check your name and password.', 'danger')
 
-    return render_template('/login.html')
+    return render_template('/index.html')
 
 # Define route for logout
 @auth_views.route('/logout')

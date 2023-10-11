@@ -14,7 +14,7 @@ karma_views = Blueprint("karma_views", __name__, template_folder='../templates')
 
 # Route to get Karma by ID
 @karma_views.route("/karma/<int:karma_id>", methods=["GET"])
-@jwt_required()
+
 def get_karma(karma_id):
     karma = get_karma_by_id(karma_id)
     if karma:
@@ -24,7 +24,7 @@ def get_karma(karma_id):
 
 # Route to calculate Karma for a specific student
 @karma_views.route("/karma/calculate/<int:student_id>", methods=["POST"])
-@jwt_required()
+
 def calculate_student_karma_route(student_id):
     student = Student.query.get(student_id)
     if student:

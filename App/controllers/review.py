@@ -3,11 +3,11 @@ from App.database import db
 
 
 def get_reviews_by_student(studentID):
-    return Review.query.filter_by(studentID=studentID).all()
+    return db.session.query(Review).filter_by(studentID=studentID).all()
 
 
 def get_reviews_by_staff(staffID):
-    return Review.query.filter_by(reviewerID=staffID).all()
+    return db.session.query(Review).filter_by(reviewerID=staffID).all()
 
 
 def edit_review(review, staff, is_positive, comment):
@@ -29,7 +29,7 @@ def delete_review(review, staff):
 
 
 def downvoteReview(reviewID, staff):
-    review = Review.query.get(reviewID)
+    review = db.session.query(Review).get(reviewID)
     if staff in review.staffDownvoters:  # If they downvoted the review already, return current votes
         return review.downvotes
 
@@ -45,7 +45,7 @@ def downvoteReview(reviewID, staff):
         db.session.add(review)
         db.session.commit()
         # Retrieve the associated Student object using studentID
-        student = Student.query.get(review.studentID)
+        student = db.session.query(Student).get(review.studentID)
 
         # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
         if student.karmaID is None:
@@ -57,7 +57,7 @@ def downvoteReview(reviewID, staff):
             student.karmaID = karma.karmaID
 
       # Update Karma for the student
-        student_karma = Karma.query.get(student.karmaID)
+        student_karma = db.session.query(Karma).get(student.karmaID)
         student_karma.calculateScore(student)
         student_karma.updateRank()
 
@@ -65,7 +65,7 @@ def downvoteReview(reviewID, staff):
 
 
 def upvoteReview(reviewID, staff):
-    review = Review.query.get(reviewID)
+    review = db.session.query(Review).get(reviewID)
     if staff in review.staffUpvoters:  # If they upvoted the review already, return current votes
         return review.upvotes
 
@@ -81,7 +81,7 @@ def upvoteReview(reviewID, staff):
         db.session.add(review)
         db.session.commit()
         # Retrieve the associated Student object using studentID
-        student = Student.query.get(review.studentID)
+        student = db.session.query(Student).get(review.studentID)
 
         # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
         if student.karmaID is None:
@@ -93,7 +93,7 @@ def upvoteReview(reviewID, staff):
             student.karmaID = karma.karmaID
 
       # Update Karma for the student
-        student_karma = Karma.query.get(student.karmaID)
+        student_karma = db.session.query(Karma).get(student.karmaID)
         student_karma.calculateScore(student)
         student_karma.updateRank()
 

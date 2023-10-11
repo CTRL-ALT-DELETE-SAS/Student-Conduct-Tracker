@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, redirect, render_template, request, abort,
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import current_user
 from App.controllers import Review
+from App.database import db
 
 from App.controllers.review import (
     get_reviews_by_student,
@@ -16,15 +17,15 @@ from App.controllers.review import (
 review_views = Blueprint("review_views", __name__, template_folder='../templates')
 
 # Route to list all reviews (you can customize this route as needed)
-@review_views.route('/reviews')
-@jwt_required()
+@review_views.route('/reviews', methods=['GET'])
+
 def list_reviews():
     reviews = Review.query.all()
     return jsonify([review.to_json() for review in reviews]), 200
 
 # Route to view a specific review and vote on it
 @review_views.route('/review/<int:review_id>', methods=['GET', 'POST'])
-@jwt_required()
+
 def view_review(review_id):
     review = Review.query.get(review_id)
 
@@ -41,7 +42,7 @@ def view_review(review_id):
 
 # Route to get reviews by student ID
 @review_views.route("/reviews/student/<string:student_id>", methods=["GET"])
-@jwt_required()
+
 def get_reviews_for_student(student_id):
     reviews = get_reviews_by_student(student_id)
     if reviews:
@@ -51,7 +52,7 @@ def get_reviews_for_student(student_id):
 
 # Route to get reviews by staff ID
 @review_views.route("/reviews/staff/<string:staff_id>", methods=["GET"])
-@jwt_required()
+
 def get_reviews_from_staff(staff_id):
     reviews = get_reviews_by_staff(staff_id)
     if reviews:
@@ -61,9 +62,9 @@ def get_reviews_from_staff(staff_id):
 
 # Route to edit a review
 @review_views.route("/reviews/edit/<int:review_id>", methods=["PUT"])
-@jwt_required()
+
 def review_edit(review_id):
-    review = Review.query.get(review_id)
+    review = db.session.query(Review).get(review_id)
     if not review:
         return "Review not found", 404
 
@@ -81,9 +82,9 @@ def review_edit(review_id):
 
 # Route to delete a review
 @review_views.route("/reviews/delete/<int:review_id>", methods=["DELETE"])
-@jwt_required()
+
 def review_delete(review_id):
-    review = Review.query.get(review_id)
+    review = db.session.query(Review).get(review_id)
     if not review:
         return "Review not found", 404
 

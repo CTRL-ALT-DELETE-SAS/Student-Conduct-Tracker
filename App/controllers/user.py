@@ -2,17 +2,17 @@ from App.models import User, Staff, Student, Admin
 from App.database import db
 
 
-def create_student(firstname, lastname, password, id, contact, studentType, yearofStudy):
+def create_student(firstname, lastname, password, studentID, contact, studentType, yearofStudy):
     new_student = Student(firstname=firstname, lastname=lastname, password=password,
-                          id=id, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
+                          id=studentID, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
     db.session.add(new_student)
     db.session.commit()
     return new_student
 
 
-def create_staff(firstname, lastname, password, id, email, teachingExperience):
+def create_staff(firstname, lastname, password, staffID, email, teachingExperience):
     new_staff = Staff(firstname=firstname, lastname=lastname, password=password,
-                      id=id, email=email, teachingExperience=teachingExperience)
+                      id=staffID, email=email, teachingExperience=teachingExperience)
     db.session.add(new_staff)
     db.session.commit()
     return new_staff
@@ -27,31 +27,33 @@ def create_user(firstname, lastname, password):
 
 
 def get_staff(id):
-    return Staff.query.get(id)
+    return db.session.query(Staff).get(id)
 
 
 def get_student(id):
-    return Student.query.get(id)
+    return db.session.query(Student).get(id)
 
 
 def is_staff(id):
-    return Staff.query.get(id) is not None
+    return db.session.query(Staff).get(id) is not None
 
 
 def is_student(id):
-    return Student.query.get(id) is not None
+    return db.session.query(Student).get(id) is not None
 
 
 def is_admin(id):
-    return Admin.query.get(id) is not None
+    return db.session.query(Admin).get(id) is not None 
 
 def get_all_users_json():
-    users = User.query.all()
-    users = [user.to_json() for user in users]
+    users = db.session.query(User).all()
+    if not users:
+        return []
+    users = [user.get_json() for user in users]
     return users
 
 def get_all_students_json():
-    students = Student.query.all()
+    students = db.session.query(Student).all()
     if not students:
         return []
     students = [student.to_json() for student in students]
@@ -59,21 +61,21 @@ def get_all_students_json():
 
 
 def get_all_staff_json():
-    staff_members = Staff.query.all()
+    staff_members = db.session.query(Staff).all()
     if not staff_members:
         return []
     staff_members = [staff.to_json() for staff in staff_members]
     return staff_members
 
 def get_all_users():
-    return User.query.all()
+    return db.session.query(User).all()
 
 def get_all_students():
-    return Student.query.all()
+    return db.session.query(Student).all()
 
 
 def get_all_staff():
-    return Staff.query.all()
+    return db.session.query(Staff).all()
 
 
 def update_student(id, contact, studentType, yearofStudy):

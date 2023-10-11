@@ -1,22 +1,22 @@
 from functools import wraps
 from flask_login import current_user, LoginManager
 from flask_jwt import JWT
-
+from App.database import db
 
 
 from App.models import User, Staff, Student, Admin
 
 
 def authenticate(firstname, lastname, password):
-    staff = Staff.query.filter_by(
+    staff = db.session.query(Staff).filter_by(
         firstname=firstname, lastname=lastname).first()
     if staff and staff.check_password(password):
         return staff
-    student = Student.query.filter_by(
+    student = db.session.query(Student).filter_by(
         firstname=firstname, lastname=lastname).first()
     if student and student.check_password(password):
         return student
-    admin = Admin.query.filter_by(
+    admin = db.session.query(Admin).filter_by(
         firstname=firstname, lastname=lastname).first()
     if admin and admin.check_password(password):
         return admin
@@ -24,13 +24,13 @@ def authenticate(firstname, lastname, password):
 
 
 def identity(payload):
-    staff = Staff.query.get(payload['identity'])
+    staff = db.session.query(Staff).get(payload['identity'])
     if staff:
         return staff
-    student = Student.query.get(payload['identity'])
+    student = db.session.query(Student).get(payload['identity'])
     if student:
         return student
-    admin = Admin.query.get(payload['identity'])
+    admin = db.session.query(Admin).get(payload['identity'])
     if admin:
         return admin
     return None
@@ -69,7 +69,7 @@ def setup_flask_login(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(user_id)
+        return db.session.query(User).get(user_id)
 
     return login_manager
 
@@ -79,7 +79,7 @@ def setup_jwt(app):
 
 
 def user_identity_lookup(identity):
-    user = User.query.filter_by(id=identity).one_or_none()
+    user = db.session.query(User).filter_by(id=identity).one_or_none()
     if user:
         return user.id
     return None
