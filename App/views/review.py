@@ -24,21 +24,21 @@ def list_reviews():
     return jsonify([review.to_json() for review in reviews]), 200
 
 # Route to view a specific review and vote on it
-@review_views.route('/review/<int:review_id>', methods=['GET', 'POST'])
+@review_views.route('/review/<int:review_id>', methods=['GET',])
 
 def view_review(review_id):
-    review = Review.query.get(review_id)
+    review = db.session.query(Review).get(review_id)
+    return jsonify(review.to_json())
 
-    if request.method == 'POST':
-        if 'upvote' in request.form:
-            upvoteReview(review_id, current_user)
-        elif 'downvote' in request.form:
-            downvoteReview(review_id, current_user) 
+#Route to upvote review 
+@review_views.route('/review/<int:review_id>/upvote', methods=['POST'])
+def upvote (review_id):
+    return upvoteReview(review_id, current_user)
 
-        # Redirect back to the review after voting
-        return redirect(url_for('view_review', review_id=review_id))
-
-    return render_template('view_review.html', review=review)
+#Route to upvote review 
+@review_views.route('/review/<int:review_id>/downvote', methods=['POST'])
+def downvote (review_id):
+    return downvoteReview(review_id, current_user)
 
 # Route to get reviews by student ID
 @review_views.route("/reviews/student/<string:student_id>", methods=["GET"])

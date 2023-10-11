@@ -31,23 +31,6 @@ def get_users_action():
     users = get_all_users_json()
     return jsonify(users)
 
-<<<<<<< Updated upstream
-@user_views.route('/api/users', methods=['POST'])
-def create_user_endpoint():
-    data = request.json
-    user= create_user(data['firstname'], data['lastname'], data['password'])
-    return jsonify({'message': f"user {data['firstname']} created"})
-
-@user_views.route('/users', methods=['POST'])
-def create_user_action():
-    data = request.form
-    flash(f"User {data['firstname']} created!")
-    user= create_user(data['firstname'], data['lastname'], data['password'])
-    return redirect(url_for('user_views.get_user_page'))
-
-=======
-# Route for static users page
->>>>>>> Stashed changes
 @user_views.route('/static/users', methods=['GET'])
 def static_user_page():
   return send_from_directory('static', 'static-user.html')
@@ -99,23 +82,6 @@ def create_staff_action():
     else:
         return "Unauthorized to create a staff member", 401
 
-<<<<<<< Updated upstream
-# Route to create a new admin
-@user_views.route("/user/create_admin", methods=["POST"])
-def create_admin_action():
-    data = request.get_json()
-    firstname = data.get("firstname")
-    lastname = data.get("lastname")
-    password = data.get("password")
-
-    if not firstname or not lastname or not password:
-        return "Invalid request data", 400
-
-    admin = create_user(firstname, lastname, password)
-    return jsonify(admin.to_json()), 201
-
-=======
->>>>>>> Stashed changes
 # Route to get a staff member by ID
 @user_views.route("/user/staff/<string:id>", methods=["GET"])
 

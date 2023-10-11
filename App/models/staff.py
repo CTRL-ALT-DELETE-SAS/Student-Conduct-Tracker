@@ -49,7 +49,7 @@ class Staff(User):
 
   def searchStudent(self, searchTerm):
     # Query the Student model for a student by ID or first name, or last name
-    students = Student.query.filter(
+    students = db.session.query(Student).filter(
         (Student.studentID == searchTerm)
         |  #studentID must be exact match (string)
         (Student.firstname.ilike(f"%{searchTerm}%"))

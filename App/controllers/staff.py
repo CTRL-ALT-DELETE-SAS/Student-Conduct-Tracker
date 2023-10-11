@@ -20,9 +20,9 @@ def get_staff_reviews(staff_id):
     if staff:
         return staff.getReviewsByStaff(staff)
 
-def search_students_by_name(searchTerm):
-    staff = Staff()
-    return staff.searchStudent(searchTerm)
+def search_students_searchTerm(searchTerm):
+    staff = Staff().searchStudent(searchTerm)
+    return staff
 
 def get_student_rankings():
     staff = Staff()

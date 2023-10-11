@@ -6,7 +6,7 @@ from flask import Blueprint, request, jsonify
 from App.controllers.staff import (
     get_staff_by_id, 
     get_staff_reviews,
-    search_students_by_name, 
+    search_students_searchTerm, 
     get_student_rankings,
     create_review
 )
@@ -26,7 +26,7 @@ def create_staff_review(staff_id):
     isPositive = random.choice([True, False])
     comment = ''.join(random.choices(string.ascii_letters, k=100))
 
-    if not studentID or not isPositive or not comment:
+    if not studentID or not comment:
             return "Invalid request data", 400
 
     review = create_review(staff_id, studentID, isPositive, comment)
@@ -38,12 +38,11 @@ def create_staff_review(staff_id):
 @staff_views.route('/staff/<int:staff_id>/reviews', methods=['GET'])
 def get_staff_reviews_endpoint(staff_id):
     reviews = get_staff_reviews(staff_id)
-    return jsonify([review.to_json() for review in reviews])
+    return jsonify(reviews)
 
-@staff_views.route('/staff/search', methods=['GET'])
-def search_students():
-    search_term = request.args.get('search_term')
-    students = search_students_by_name(search_term)
+@staff_views.route('/staff/<string:search_term>', methods=['GET'])
+def search_students(search_term):
+    students = search_students_searchTerm(search_term)
     return jsonify(students)
 
 @staff_views.route('/staff/rankings', methods=['GET'])
