@@ -1,10 +1,14 @@
 from App.models import Review, Karma, Student
 from App.database import db
 
+def get_reviews(): 
+    return db.session.query(Review).all()
 
-def get_reviews_by_student(studentID):
+def get_reviews_for_student(studentID):
     return db.session.query(Review).filter_by(studentID=studentID).all()
 
+def get_review(reviewID):
+    return db.session.query(Review).get(reviewID)
 
 def get_reviews_by_staff(staffID):
     return db.session.query(Review).filter_by(reviewerID=staffID).all()
@@ -66,6 +70,7 @@ def downvoteReview(reviewID, staff):
 
 def upvoteReview(reviewID, staff):
     review = db.session.query(Review).get(reviewID)
+
     if staff in review.staffUpvoters:  # If they upvoted the review already, return current votes
         return review.upvotes
 

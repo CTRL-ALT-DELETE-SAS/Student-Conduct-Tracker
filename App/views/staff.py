@@ -1,13 +1,14 @@
 import random
 import string
 from flask import Blueprint, request, jsonify
-
+from App.controllers import Student, Staff
+from App.database import db
 
 from App.controllers.staff import (
     get_staff_by_id, 
     get_staff_reviews,
     search_students_searchTerm, 
-    get_student_rankings,
+    getStudentRankings,
     create_review
 )
 
@@ -22,7 +23,10 @@ def get_staff(staff_id):
 
 @staff_views.route('/staff/<int:staff_id>/reviews', methods=['POST'])
 def create_staff_review(staff_id):
-    studentID = str(random.randint(1, 100))
+    if not get_staff_by_id(staff_id):
+        return 'Staff does not exist', 404 
+    
+    studentID = str(random.randint(50, (db.session.query(Staff).count() + db.session.query(Student).count() + 2)))
     isPositive = random.choice([True, False])
     comment = ''.join(random.choices(string.ascii_letters, k=100))
 
@@ -40,12 +44,12 @@ def get_staff_reviews_endpoint(staff_id):
     reviews = get_staff_reviews(staff_id)
     return jsonify(reviews)
 
-@staff_views.route('/staff/<string:search_term>', methods=['GET'])
+@staff_views.route('/staff/student/<string:search_term>', methods=['GET'])
 def search_students(search_term):
     students = search_students_searchTerm(search_term)
     return jsonify(students)
 
-@staff_views.route('/staff/rankings', methods=['GET'])
+@staff_views.route('/rankings', methods=['GET'])
 def get_student_rankings():
-    rankings = get_student_rankings()
+    rankings = getStudentRankings()
     return jsonify(rankings)

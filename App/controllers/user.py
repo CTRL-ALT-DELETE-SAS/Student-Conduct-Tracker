@@ -1,4 +1,4 @@
-from App.models import Staff, Student, Admin
+from App.models import Staff, Student, Admin, User
 from App.database import db
 
 
@@ -25,24 +25,24 @@ def create_user(firstname, lastname, password):
     return new_admin
 
 
-def get_staff(id):
-    return db.session.query(Staff).get(id)
+def get_staff(staffID):
+    return db.session.query(Staff).get(staffID)
 
 
-def get_student(id):
-    return db.session.query(Student).get(id)
+def get_student(studentID):
+    return db.session.query(Student).get(studentID)
 
 
-def is_staff(id):
-    return db.session.query(Staff).get(id) is not None
+def is_staff(staffID):
+    return db.session.query(Staff).get(staffID) is not None
 
 
-def is_student(id):
-    return db.session.query(Student).get(id) is not None
+def is_student(studentID):
+    return db.session.query(Student).get(studentID) is not None
 
 
-def is_admin(id):
-    return db.session.query(Admin).get(id) is not None 
+def is_admin(AdminID):
+    return db.session.query(Admin).get(AdminID) is not None 
 
 def get_all_users_json():
     users = get_all_users()
@@ -72,18 +72,15 @@ def get_all_users():
 def get_all_students():
     return db.session.query(Student).all()
 
-
 def get_all_staff():
     return db.session.query(Staff).all()
 
 
-def update_student(id, contact, studentType, yearofStudy):
-    student = get_student(id)
-    if student:
-        student.contact = contact
-        student.studentType = studentType
-        student.yearofStudy = yearofStudy
-        db.session.add(student)
-        db.session.commit()
-        return student
-    return None
+def update_student(student, contacts, student_type, yearofStudy):
+    student.contact = contacts
+    student.studentType = student_type
+    student.yearOfStudy = yearofStudy
+    db.session.add(student)
+    db.session.commit()
+    return student
+    
