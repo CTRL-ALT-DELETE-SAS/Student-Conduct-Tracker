@@ -39,11 +39,6 @@ def create_staff_review(staff_id):
         return jsonify(review.to_json()), 201
     return 'Failed to create review', 400
 
-@staff_views.route('/staff/<int:staff_id>/reviews', methods=['GET'])
-def get_staff_reviews_endpoint(staff_id):
-    reviews = get_staff_reviews(staff_id)
-    return jsonify(reviews)
-
 @staff_views.route('/staff/student/<string:search_term>', methods=['GET'])
 def search_students(search_term):
     students = search_students_searchTerm(search_term)

@@ -83,21 +83,6 @@ def get_student_action(id):
     else:
         return "Student not found", 404
 
-# Route to check if a user is a staff member
-@user_views.route("/user/is_staff/<string:id>", methods=["GET"])
-def is_staff_action(id):
-    return jsonify({"is_staff": is_staff(id)}), 200
-
-# Route to check if a user is a student
-@user_views.route("/user/is_student/<string:id>", methods=["GET"])
-def is_student_action(id):
-    return jsonify({"is_student": is_student(id)}), 200
-
-# Route to check if a user is an admin
-@user_views.route("/user/is_admin/<string:id>", methods=["GET"])
-def is_admin_action(id):
-    return jsonify({"is_admin": is_admin(id)}), 200
-
 # Route to get all students
 @user_views.route("/students", methods=["GET"])
 def get_all_students_action():
