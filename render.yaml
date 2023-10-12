@@ -1,35 +1,35 @@
 
 services:
 - type: web
-  name: flask-postgres-api
+  name: student-postgres-api
   env: python
-  repo: https://github.com/uwidcit/flaskmvc.git
+  repo: https://github.com/CTRL-ALT-DELETE-SAS/Student-Conduct-Tracker.git
   plan: free
   branch: main
   healthCheckPath: /healthcheck
   buildCommand: "pip install -r requirements.txt"
   startCommand: "gunicorn wsgi:app"
   envVars:
-  - fromGroup: flask-postgres-api-settings
+  - fromGroup: student-postgres-api-settings
   - key: POSTGRES_URL
     fromDatabase:
-      name: flask-postgres-api-db
+      name: student-postgres-api-db
       property: host
   - key: POSTGRES_USER
     fromDatabase:
-      name: flask-postgres-api-db
+      name: student-postgres-api-db
       property: user
   - key: POSTGRES_PASSWORD
     fromDatabase:
-      name: flask-postgres-api-db
+      name: student-postgres-api-db
       property: password
   - key: POSTGRES_DB
     fromDatabase:
-      name: flask-postgres-api-db
+      name: student-postgres-api-db
       property: database 
 
 envVarGroups:
-- name: flask-postgres-api-settings
+- name: student-postgres-api-settings
   envVars:
   - key: ENV
     value: production

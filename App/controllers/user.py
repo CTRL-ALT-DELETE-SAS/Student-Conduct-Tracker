@@ -18,8 +18,8 @@ def create_staff(firstname, lastname, password, staffID, email, teachingExperien
     return new_staff
 
 
-def create_user(firstname, lastname, password):
-    new_admin = Admin(firstname=firstname, lastname=lastname, password=password)
+def create_user(firstname, password):
+    new_admin = Admin(firstname=firstname, lastname='bobbing', password=password)
     db.session.add(new_admin)
     db.session.commit()
     return new_admin
