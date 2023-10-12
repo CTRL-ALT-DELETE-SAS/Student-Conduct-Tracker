@@ -5,7 +5,7 @@ services:
     repo: https://github.com/CTRL-ALT-DELETE-SAS/Student-Conduct-Tracker.git
     plan: free
     branch: main
-    healthCheckPath: /healthcheck
+    healthCheckPath: /users
     buildCommand: 'pip install -r requirements.txt'
     startCommand: 'gunicorn wsgi:app'
     envVars:

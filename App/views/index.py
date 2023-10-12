@@ -15,7 +15,7 @@ def index_page():
 def init():
     db.drop_all()
     db.create_all()
-    create_user('bob', 'builder', 'bobpass')
+    create_user('bob', 'bobpass')
 
     for ID in  range(2, 50): 
         create_staff(
@@ -38,7 +38,3 @@ def init():
             str(random.randint(1, 8))
         )
     return jsonify(message='db initialized!')
-
-@index_views.route('/healthcheck ', methods=['GET'])
-def health_check():
-    return jsonify({'status':'healthy'})
