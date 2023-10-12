@@ -6,7 +6,6 @@ from App.database import db
 
 from App.controllers.staff import (
     get_staff_by_id, 
-    get_staff_reviews,
     search_students_searchTerm, 
     getStudentRankings,
     create_review
