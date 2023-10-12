@@ -37,5 +37,8 @@ def init():
             random.choice(['Full-time','Part-time', 'evening']),
             str(random.randint(1, 8))
         )
-
     return jsonify(message='db initialized!')
+
+@index_views.route('/healthcheck ', methods=['GET'])
+def health_check():
+    return jsonify({'status':'healthy'})
