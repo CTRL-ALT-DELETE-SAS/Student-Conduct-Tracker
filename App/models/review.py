@@ -6,20 +6,20 @@ from .karma import Karma
 # Define the association table for staff upvotes on reviews
 review_staff_upvoters = db.Table(
     'review_staff_upvoters',
-    db.Column('reviewID', db.Integer, db.ForeignKey('review.reviewID')),
+    db.Column('reviewID', db.Integer, db.ForeignKey('review.ID')),
     db.Column('staffID', db.Integer, db.ForeignKey('staff.ID')),
 )
 
 review_staff_downvoters = db.Table(
     'review_staff_downvoters',
-    db.Column('reviewID', db.Integer, db.ForeignKey('review.reviewID')),
+    db.Column('reviewID', db.Integer, db.ForeignKey('review.ID')),
     db.Column('staffID', db.Integer, db.ForeignKey('staff.ID')),
 )
 
 
 class Review(db.Model):
   __tablename__ = 'review'
-  reviewID = db.Column(db.Integer, primary_key=True)
+  ID = db.Column(db.Integer, primary_key=True)
   reviewerID = db.Column(
       db.String(10),
       db.ForeignKey('staff.ID'))  #each review has 1 creator
@@ -64,7 +64,7 @@ class Review(db.Model):
     self.created = datetime.now()
 
   def get_id(self):
-    return self.reviewID
+    return self.ID
 
 
 #allows the comment and whether the review is positive to be edited if the staff member is the creator of the review, returns none if not
@@ -105,7 +105,7 @@ class Review(db.Model):
       db.session.commit()
 
       # Retrieve the associated Student object using studentID
-      student = Student.query.get(self.ID)
+      student = Student.query.get(self.studentID)
 
       # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
       if student.karmaID is None:
@@ -140,7 +140,7 @@ class Review(db.Model):
       db.session.add(self)
       db.session.commit()
       # Retrieve the associated Student object using studentID
-      student = Student.query.get(self.ID)
+      student = Student.query.get(self.studentID)
 
       # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
       if student.karmaID is None:
@@ -161,7 +161,7 @@ class Review(db.Model):
 
   def to_json(self):
     return {
-        "reviewID": self.reviewID,
+        "reviewID": self.ID,
         "reviewer": self.reviewer.firstname + " " + self.reviewer.lastname,
         "studentID": self.student.ID,
         "studentName": self.student.firstname + " " + self.student.lastname,
