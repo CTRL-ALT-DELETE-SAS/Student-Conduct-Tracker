@@ -111,7 +111,7 @@ def get_student_action(id):
 def get_all_students_action():
     students = get_all_students()
     if students:
-        return [student.to_json() for student in students], 200
+       return jsonify([student.to_json() for student in students]), 200
     else:
         return "No students found", 404
 
