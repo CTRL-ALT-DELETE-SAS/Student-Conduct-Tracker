@@ -1,7 +1,10 @@
 import random
-from flask import Blueprint, render_template, jsonify, send_from_directory 
+from flask import Blueprint, request, render_template, jsonify, send_from_directory 
+from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 import randomname
 from App.controllers import Staff, Student
+from App.controllers import *
+from flask_login import current_user, login_required
 from App.controllers.user import (
     create_student,
     create_staff,
@@ -34,24 +37,46 @@ def static_user_page():
   return send_from_directory('static', 'static-user.html')
 
 # Route to create a new student
-@user_views.route("/create_student/<string:first_name>/<string:pass_word>", methods=["POST"])
+@user_views.route("/user/create_student", methods=["POST"])
 def create_student_action(first_name, pass_word):
-    firstname = first_name
-    lastname = randomname.get_name()
-    password = pass_word
-    studentID = db.session.query(Staff).count() + db.session.query(Student).count() + 2
-    contact = randomname.get_name() + '@schooling.com'
-    studentType = random.choice(['Full-time','Part-time', 'evening'])
-    yearOfStudy = str(random.randint(1, 8))
-
-    if not firstname or not lastname or not password or not studentID or studentID < studentID:
-        return "Invalid request data", 400
-
-    student = create_student(
+	firstname = first_name
+	lastname = randomname.get_name()
+	password = pass_word
+	studentID = db.session.query(Staff).count() + db.session.query(Student).count() + 2
+	contact = randomname.get_name() + '@schooling.com'
+	studentType = random.choice(['Full-time','Part-time', 'evening'])
+	yearOfStudy = str(random.randint(1, 8))
+	
+	if not firstname or not lastname or not password or not studentID or studentID < studentID:
+			return "Invalid request data", 400
+		
+	student = create_student(
         firstname, lastname, password, studentID, contact, studentType, yearOfStudy
     )
-    return jsonify(student.to_json()), 201
+	return jsonify(student.to_json()), 201
 
+
+# Route to create a new staff member
+@user_views.route("/user/create_staff", methods=["POST"])
+def create_staff_action():
+	#get data from the post request body
+		data = request.form
+
+	#validate data
+		if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
+				return "Invalid request data", 400
+
+		# Check if the current user is an admin
+		if current_user and current_user.is_admin:
+				staff = create_staff(current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
+				if staff:
+					return jsonify(staff.to_json()), 201
+				else:
+					return "Id already exists", 400
+		else:
+				return "Unauthorized: You must be an admin to create staff members", 401
+
+'''OLD CREATE STAFF ROUTE
 
 # Route to create a new staff member
 @user_views.route("/create_staff/<string:first_name>/<string:pass_word>", methods=["POST"])
@@ -69,8 +94,9 @@ def create_staff_action(first_name, pass_word):
     staff = create_staff(
             firstname, lastname, password, staffID, email, teachingExperience
         )
-    return jsonify(staff.to_json()), 201
+    return jsonify(staff.to_json()), 201'''
 
+	
 # Route to get a student by ID
 @user_views.route("/student/<string:id>", methods=["GET"])
 def get_student_action(id):
@@ -85,7 +111,7 @@ def get_student_action(id):
 def get_all_students_action():
     students = get_all_students()
     if students:
-        return jsonify([student.to_json() for student in students]), 200
+        return [student.to_json() for student in students], 200
     else:
         return "No students found", 404
 

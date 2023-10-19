@@ -10,20 +10,18 @@ def create_student(firstname, lastname, password, studentID, contact, studentTyp
     return new_student
 
 
-def create_staff(firstname, lastname, password, staffID, email, teachingExperience):
-    new_staff = Staff(firstname=firstname, lastname=lastname, password=password,
-                      staffID=staffID, email=email, teachingExperience=teachingExperience)
+def create_staff(admin, firstname, lastname, password, staffID, email, teachingExperience):
+    new_staff = admin.addStaff(firstname, lastname, password, staffID, email, teachingExperience)
     db.session.add(new_staff)
     db.session.commit()
     return new_staff
 
 
 def create_user(firstname, password):
-    new_admin = Admin(firstname=firstname, lastname='bobbing', password=password)
+    new_admin = Admin(firstname=firstname, lastname="bobbing", password=password)
     db.session.add(new_admin)
     db.session.commit()
     return new_admin
-
 
 def get_staff(staffID):
     return db.session.query(Staff).get(staffID)

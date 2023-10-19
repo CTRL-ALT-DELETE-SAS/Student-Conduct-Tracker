@@ -2,7 +2,7 @@ from functools import wraps
 from flask_login import current_user, LoginManager
 from flask_jwt import JWT
 from App.database import db
-
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager
 
 from App.models import User, Staff, Student, Admin
 
@@ -22,6 +22,20 @@ def authenticate(firstname, lastname, password):
         return admin
     return None
 
+def jwt_authenticate(id, password):
+	staff = db.session.query(Staff).filter_by(
+			ID=id).first()
+	if staff and staff.check_password(password):
+			return create_access_token(identity=id)
+	student = db.session.query(Student).filter_by(
+	ID=id).first()
+	if student and student.check_password(password):
+			return create_access_token(identity=id)
+	admin = db.session.query(Admin).filter_by(
+	ID=id).first()
+	if admin and admin.check_password(password):
+			return create_access_token(identity=id)
+	return None
 
 def identity(payload):
     staff = db.session.query(Staff).get(payload['identity'])
