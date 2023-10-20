@@ -4,6 +4,8 @@ from App.models import db
 from App.controllers import create_user, create_staff, create_student
 import randomname
 
+from App.models.admin import Admin
+
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
 
 # Define a route for the index view
@@ -15,7 +17,7 @@ def index_page():
 def init():
     db.drop_all()
     db.create_all()
-    create_user('bob', 'boblast', 'bobpass')
+    create_user('bob', 'bobpass')
 
     for ID in  range(2, 50): 
         create_staff(

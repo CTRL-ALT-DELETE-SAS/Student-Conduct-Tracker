@@ -2,10 +2,10 @@ import random
 import string
 from flask import Blueprint, request, jsonify
 from App.controllers import Student, Staff
+from App.controllers.user import get_staff, get_student
 from App.database import db
 
 from App.controllers.staff import (
-    get_staff_by_id, 
     search_students_searchTerm, 
     getStudentRankings,
     create_review
@@ -14,25 +14,29 @@ from App.controllers.staff import (
 staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 
 @staff_views.route('/staff/<int:staff_id>', methods=['GET'])
-def get_staff(staff_id):
-    staff = get_staff_by_id(staff_id)
+def get_staff_action(staff_id):
+    staff = get_staff(staff_id)
     if staff:
         return jsonify(staff.to_json())
     return 'Staff not found', 404
 
-@staff_views.route('/staff/<int:staff_id>/reviews', methods=['POST'])
-def create_staff_review(staff_id):
-    if not get_staff_by_id(staff_id):
-        return 'Staff does not exist', 404 
+@staff_views.route('/staff/<int:student_id>/reviews', methods=['POST'])
+def create_staff_review(student_id):
+    data = request.json
+
+    if not get_student(student_id):
+        return 'Student does not exist', 404
+
+    if not data['staff_id'] or not data['comment']:
+        return "Invalid request data", 400
     
-    studentID = str(random.randint(50, (db.session.query(Staff).count() + db.session.query(Student).count() + 2)))
-    isPositive = random.choice([True, False])
-    comment = ''.join(random.choices(string.ascii_letters, k=100))
+    if data['isPositive'] not in (True, False):
+        return jsonify({"message": f"invalid Positivity ({data['isPositive']}). Positive: true or false"}), 400
 
-    if not studentID or not comment:
-            return "Invalid request data", 400
+    if not get_staff(data['staff_id']):
+        return 'Staff does not exist', 404 
 
-    review = create_review(staff_id, studentID, isPositive, comment)
+    review = create_review(data['staff_id'], student_id, data['isPositive'], data['comment'])
     
     if review:
         return jsonify(review.to_json()), 201

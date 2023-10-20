@@ -1,4 +1,4 @@
-from App.models import Staff, Student, Admin, User
+from App.models import Staff, Student, Admin
 from App.database import db
 
 
@@ -10,15 +10,15 @@ def create_student(firstname, lastname, password, studentID, contact, studentTyp
     return new_student
 
 
-def create_staff(admin, firstname, lastname, password, staffID, email, teachingExperience):
-    new_staff = admin.addStaff(firstname, lastname, password, staffID, email, teachingExperience)
+def create_staff(firstname, lastname, password, staffID, email, teachingExperience):
+    new_staff = Staff(firstname=firstname, lastname=lastname, password=password, staffID=staffID, email=email, teachingExperience=teachingExperience)
     db.session.add(new_staff)
     db.session.commit()
     return new_staff
 
 
 def create_user(firstname, password):
-    new_admin = Admin(firstname=firstname, lastname="bobbing", password=password)
+    new_admin = Admin(firstname=firstname, lastname="Admin", password=password)
     db.session.add(new_admin)
     db.session.commit()
     return new_admin
@@ -29,6 +29,9 @@ def get_staff(staffID):
 
 def get_student(studentID):
     return db.session.query(Student).get(studentID)
+
+def get_admin(adminID):
+    return db.session.query(Admin).get(adminID)
 
 
 def is_staff(staffID):
@@ -74,9 +77,12 @@ def get_all_staff():
     return db.session.query(Staff).all()
 
 
-def update_student(student, contacts, student_type, yearofStudy):
-    student.contact = contacts
-    student.studentType = student_type
+def update_student(student, firstname, lastname, password, contact, studentType, yearofStudy):
+    student.firstname = firstname 
+    student.lastname = lastname
+    student.password = password
+    student.contact = contact
+    student.studentType = studentType
     student.yearOfStudy = yearofStudy
     db.session.add(student)
     db.session.commit()

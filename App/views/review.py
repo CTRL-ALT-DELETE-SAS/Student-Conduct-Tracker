@@ -2,9 +2,8 @@ from flask import Blueprint, jsonify, redirect, render_template, request, abort,
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import current_user
 from App.controllers import Review
-from App.controllers.staff import get_staff_by_id
+from App.controllers.user import get_staff
 from App.controllers.student import search_student
-from App.database import db
 
 from App.controllers.review import (
     get_reviews_by_staff,
@@ -39,7 +38,7 @@ def view_review(review_id):
 @review_views.route('/review/<int:staff_id>/<int:review_id>/upvote', methods=['POST'])
 def upvote (review_id, staff_id):
     if get_review(review_id):
-        staff = get_staff_by_id(staff_id)
+        staff = get_staff(staff_id)
         if staff:
             current = get_review(review_id).upvotes
             upvoteReview(review_id, staff)
@@ -56,7 +55,7 @@ def upvote (review_id, staff_id):
 @review_views.route('/review/<int:staff_id>/<int:review_id>/downvote', methods=['POST'])
 def downvote (review_id, staff_id):
     if get_review(review_id):
-        staff = get_staff_by_id(staff_id)
+        staff = get_staff(staff_id)
         if staff:
             current = get_review(review_id).downvotes
             downvoteReview(review_id, staff)
@@ -83,7 +82,7 @@ def get_reviews_of_student(student_id):
 # Route to get reviews by staff ID
 @review_views.route("/reviews/staff/<string:staff_id>", methods=["GET"])
 def get_reviews_from_staff(staff_id):
-    if get_staff_by_id(staff_id):
+    if get_staff(staff_id):
         reviews = get_reviews_by_staff(staff_id)
         if reviews:
             return jsonify([review.to_json() for review in reviews]), 200
@@ -92,39 +91,45 @@ def get_reviews_from_staff(staff_id):
     return "Staff does not exist", 404
 
 # Route to edit a review
-@review_views.route("/review/edit/<int:staff_id>/<int:review_id>/<int:isPositive>/<string:text>", methods=["PUT"])
-def review_edit(review_id, staff_id, isPositive, text):
+@review_views.route("/review/edit/<int:review_id>", methods=["PUT"])
+def review_edit(review_id):
     review = get_review(review_id)
-    staff = get_staff_by_id(staff_id)
+
     if not review:
         return "Review not found", 404
 
-    if isPositive not in (0, 1):
-        return "invalid positivity. Positive: True, False", 400 
-
-    if review.reviewerID is not staff.ID:
+    staff = get_staff(review.reviewerID)
+    
+    if review.reviewerID != staff.ID:
         return "Not author of review", 401 
 
-    is_positive = isPositive
-    comment = text
+    data = request.json
 
-    if comment is not None:
-        edit_review(review, staff, is_positive, comment)
-        return jsonify(review.to_json(), 'Review Editted'), 200
-    else:
+    if not data['comment']:
         return "Invalid request data", 400
+    
+    if data['isPositive'] not in (True, False):
+        return jsonify({"message": f"invalid Positivity ({data['isPositive']}). Positive: true or false"}), 400
+
+    edit_review(review, staff, data['isPositive'], data['comment'])
+    return jsonify(review.to_json(), 'Review Editted'), 200
+
 
 
 # Route to delete a review
-@review_views.route("/review/delete/<int:staff_id>/<int:review_id>", methods=["DELETE"])
-def review_delete(review_id, staff_id):
+@review_views.route("/review/delete/<int:review_id>", methods=["DELETE"])
+def review_delete(review_id):
     review = get_review(review_id)
-    staff = get_staff_by_id(staff_id)
 
     if not review:
         return "Review not found", 404
+
+    staff = get_staff(review.reviewerID)
     
-    if review.reviewerID is not staff.ID:
+    if review.reviewerID != staff.ID:
+        return "Not author of review", 401 
+    
+    if review.reviewerID != staff.ID:
         return "Not author of review", 401 
    
     if delete_review(review, staff):

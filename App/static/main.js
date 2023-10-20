@@ -9,6 +9,7 @@ function loadTable(users) {
     table.innerHTML += `<tr>
             <td>${user.ID}</td>
             <td>${user.firstname}</td>
+            <td>${user.lastname}</td>
         </tr>`;
   }
 }

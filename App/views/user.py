@@ -1,21 +1,9 @@
-import random
 from flask import Blueprint, request, render_template, jsonify, send_from_directory 
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
-import randomname
 from App.controllers import Staff, Student
 from App.controllers import *
 from flask_login import current_user, login_required
-from App.controllers.user import (
-    create_student,
-    create_staff,
-    get_all_users,
-    get_student,
-    get_all_users_json,
-    get_all_students,
-    get_all_staff,
-    update_student,
-)
-from App.database import db
+
 
 # Create a Blueprint for user views
 user_views = Blueprint("user_views", __name__, template_folder='../templates')
@@ -38,65 +26,44 @@ def static_user_page():
 
 # Route to create a new student
 @user_views.route("/user/create_student", methods=["POST"])
-def create_student_action(first_name, pass_word):
-	firstname = first_name
-	lastname = randomname.get_name()
-	password = pass_word
-	studentID = db.session.query(Staff).count() + db.session.query(Student).count() + 2
-	contact = randomname.get_name() + '@schooling.com'
-	studentType = random.choice(['Full-time','Part-time', 'evening'])
-	yearOfStudy = str(random.randint(1, 8))
-	
-	if not firstname or not lastname or not password or not studentID or studentID < studentID:
-			return "Invalid request data", 400
-		
-	student = create_student(
-        firstname, lastname, password, studentID, contact, studentType, yearOfStudy
-    )
-	return jsonify(student.to_json()), 201
+def create_student_action():
+    data = request.json
+
+    if not data['firstname'] or not data['lastname'] or not data['password'] or not data['studentID'] or not data['contact'] or not data['studentType'] or not data['yearOfStudy']:
+        return "Invalid request data", 400
+
+    if get_student(data['studentID']) or get_staff(data['studentID']) or get_admin(data['studentID']):
+          return jsonify({"error": f"A user already uses the ID {data['studentID']}"}), 500
+    
+    if data['studentType'] not in ('Full-time', 'Part-time', 'Evening'):
+        return jsonify({"message": f"invalid student type ({data['studentType']}). Types: Full-time, Part-time and Evening"}), 400 
+
+    student = create_student(firstname=data['firstname'], lastname=data['lastname'], password=data['password'], 
+                            studentID=data['studentID'], contact=data['contact'], studentType=data['studentType'], yearofStudy=data['yearOfStudy'])
+    
+    if student: return jsonify({"message": f"Student created with ID {student.ID}"}, student.to_json()), 201
+    else: return "Error creating student", 400
 
 
 # Route to create a new staff member
 @user_views.route("/user/create_staff", methods=["POST"])
 def create_staff_action():
 	#get data from the post request body
-		data = request.form
+    data = request.json
 
 	#validate data
-		if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
-				return "Invalid request data", 400
-
-		# Check if the current user is an admin
-		if current_user and current_user.is_admin:
-				staff = create_staff(current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
-				if staff:
-					return jsonify(staff.to_json()), 201
-				else:
-					return "Id already exists", 400
-		else:
-				return "Unauthorized: You must be an admin to create staff members", 401
-
-'''OLD CREATE STAFF ROUTE
-
-# Route to create a new staff member
-@user_views.route("/create_staff/<string:first_name>/<string:pass_word>", methods=["POST"])
-def create_staff_action(first_name, pass_word):
-    firstname = first_name
-    lastname = randomname.get_name()
-    password = pass_word
-    staffID = db.session.query(Staff).count() + db.session.query(Student).count() + 2
-    email = randomname.get_name() + '@schooling.com'
-    teachingExperience = str(random.randint(1, 15))
-
-    if not firstname or not lastname or not password or not staffID or not email or staffID < staffID:
+    if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
         return "Invalid request data", 400
+    
+    if get_student(data['staffID']) or get_staff(data['staffID']) or get_admin(data['staffID']):
+          return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 500
 
-    staff = create_staff(
-            firstname, lastname, password, staffID, email, teachingExperience
-        )
-    return jsonify(staff.to_json()), 201'''
+    staff = create_staff(data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
+		
+    if staff: return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
+    else: return "Error creating staff", 400
 
-	
+
 # Route to get a student by ID
 @user_views.route("/student/<string:id>", methods=["GET"])
 def get_student_action(id):
@@ -105,6 +72,7 @@ def get_student_action(id):
         return jsonify(student.to_json()), 200
     else:
         return "Student not found", 404
+
 
 # Route to get all students
 @user_views.route("/students", methods=["GET"])
@@ -115,6 +83,7 @@ def get_all_students_action():
     else:
         return "No students found", 404
 
+
 # Route to get all staff members
 @user_views.route("/staff", methods=["GET"])
 def get_all_staff_action():
@@ -124,24 +93,28 @@ def get_all_staff_action():
     else:
         return "No staff members found", 404
 
+
 # Route to update a student's information
-@user_views.route("/update_student/<int:studentID>/<string:contacts>/<string:student_type>/<int:year_of_study>", methods=["PUT"])
-def update_student_action(studentID, contacts, student_type, year_of_study):
-    student = get_student(studentID)
+@user_views.route("/update_student", methods=["PUT"])
+def update_student_action():
+    data = request.json
+
+    if not data['firstname'] or not data['lastname'] or not data['password'] or not data['studentID'] or not data['contact'] or not data['studentType'] or not data['yearOfStudy']:
+        return "Invalid request data", 400
+
+    student = get_student(data['studentID'] )
     
     if student:
-        contact = contacts
-        studentType = student_type
-        yearofStudy = year_of_study
+        if data['studentType'] not in ('Full-time', 'Part-time', 'Evening'):
+            return jsonify({"message": f"invalid student type ({data['studentType']}). Types: Full-time, Part-time and Evening"}), 400 
         
-        if studentType not in ('Full-time', 'Part-time', 'Evening'):
-            return "invalid student type. Types: Full-time, Part-time and Evening", 400 
-
-        if not contact or not studentType or not yearofStudy:
-            return "Invalid request data", 400
-        
-        update_student(student, contact, studentType, yearofStudy)
+        update_student(student, data['firstname'], data['lastname'], data['password'], data['contact'], data['studentType'], data['yearOfStudy'])
         return jsonify(student.to_json(), "Student information updated successfully"), 200
     else:
         return "Student not found", 404
 
+
+@user_views.route('/identify', methods=['GET'])
+@jwt_required()
+def identify_user_action():
+    return jsonify({'message': f"username: {current_user.fistname}, id : {current_user.ID}, type: {current_user.user_type}"})
