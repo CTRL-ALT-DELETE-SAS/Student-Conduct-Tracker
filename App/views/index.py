@@ -15,33 +15,31 @@ def index_page():
 
 @index_views.route('/init', methods=['POST'])
 def init():
-    db.drop_all()
-    db.create_all()
-    admin= create_user('bob', 'boblast' , 'bobpass')
+  db.drop_all()
+  db.create_all()
+  admin= create_user('bob', 'boblast' , 'bobpass')
+  for ID in  range(2, 50): 
+    staff= create_staff(admin, 
+          randomname.get_name(), 
+          randomname.get_name(), 
+          randomname.get_name(), 
+          str(ID), 
+          randomname.get_name() + '@schooling.com', 
+          str(random.randint(1, 15))
+      )
+    db.session.add(staff)
+    db.session.commit()
 
-    for ID in  range(2, 50): 
-      staff= create_staff(admin, 
-            randomname.get_name(), 
-            randomname.get_name(), 
-            randomname.get_name(), 
-            str(ID), 
-            randomname.get_name() + '@schooling.com', 
-            str(random.randint(1, 15))
-        )
-      db.session.add(staff)
+  for ID in range(50, 150): 
+      student= create_student(admin, str(ID),
+          randomname.get_name(), 
+          randomname.get_name(), 
+          randomname.get_name(),
+          randomname.get_name() + '@schooling.com',
+          random.choice(['Full-Time','Part-Time', 'Evening']),
+          str(random.randint(1, 8))
+      )
+      db.session.add(student)
       db.session.commit()
-        
-    for ID in range(50, 150): 
-        student= create_student(admin,
-            randomname.get_name(), 
-            randomname.get_name(), 
-            randomname.get_name(),
-            str(ID),
-            randomname.get_name() + '@schooling.com',
-            random.choice(['Full-Time','Part-Time', 'Evening']),
-            str(random.randint(1, 8))
-        )
-        db.session.add(student)
-        db.session.commit()
-    
-    return jsonify({'message': 'Database initialized'})
+
+  return jsonify({'message': 'Database initialized'}),201
