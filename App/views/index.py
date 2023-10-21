@@ -17,10 +17,10 @@ def index_page():
 def init():
     db.drop_all()
     db.create_all()
-    create_user('bob', 'bobpass')
+    admin= create_user('bob', 'boblast' , 'bobpass')
 
     for ID in  range(2, 50): 
-        create_staff(
+      staff= create_staff(admin, 
             randomname.get_name(), 
             randomname.get_name(), 
             randomname.get_name(), 
@@ -28,15 +28,20 @@ def init():
             randomname.get_name() + '@schooling.com', 
             str(random.randint(1, 15))
         )
+      db.session.add(staff)
+      db.session.commit()
         
     for ID in range(50, 150): 
-        create_student(
+        student= create_student(admin,
             randomname.get_name(), 
             randomname.get_name(), 
             randomname.get_name(),
             str(ID),
             randomname.get_name() + '@schooling.com',
-            random.choice(['Full-time','Part-time', 'evening']),
+            random.choice(['Full-Time','Part-Time', 'Evening']),
             str(random.randint(1, 8))
         )
-    return jsonify(message='db initialized!')
+        db.session.add(student)
+        db.session.commit()
+    
+    return jsonify({'message': 'Database initialized'})

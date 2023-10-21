@@ -2,36 +2,35 @@ from App.models import Staff, Student, Admin
 from App.database import db
 
 
-def create_student(firstname, lastname, password, studentID, contact, studentType, yearofStudy):
-    new_student = Student(firstname=firstname, lastname=lastname, password=password,
-                          studentID=studentID, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
-    db.session.add(new_student)
-    db.session.commit()
-    return new_student
+def create_student(admin,studentID, firstname, lastname, password, contact, studentType, yearofStudy):
+		new_student = admin.addStudent(studentID, firstname=firstname, lastname=lastname, password=password, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
+		if new_student:
+			return new_student
+		return None
 
 
-def create_staff(firstname, lastname, password, staffID, email, teachingExperience):
-    new_staff = Staff(firstname=firstname, lastname=lastname, password=password, staffID=staffID, email=email, teachingExperience=teachingExperience)
-    db.session.add(new_staff)
-    db.session.commit()
-    return new_staff
+def create_staff(admin, firstname, lastname, password, staffID, email, teachingExperience):
+		new_staff = admin.addStaff(staffID, firstname=firstname, lastname=lastname, password=password, email=email, teachingExperience=teachingExperience)
+		if new_staff:
+			return new_staff
+		return None
 
 
-def create_user(firstname, password):
-    new_admin = Admin(firstname=firstname, lastname="Admin", password=password)
+def create_user(firstname, lastname, password):
+    new_admin = Admin(firstname=firstname, lastname=lastname, password=password)
     db.session.add(new_admin)
     db.session.commit()
     return new_admin
 
 def get_staff(staffID):
-    return db.session.query(Staff).get(staffID)
+    return Staff.query.filter_by(ID=staffID).first()
 
 
 def get_student(studentID):
-    return db.session.query(Student).get(studentID)
+    return Student.query.filter_by(ID=studentID).first()
 
 def get_admin(adminID):
-    return db.session.query(Admin).get(adminID)
+    return Admin.query.filter_by(ID=adminID).first()
 
 
 def is_staff(staffID):
@@ -80,7 +79,8 @@ def get_all_staff():
 def update_student(student, firstname, lastname, password, contact, studentType, yearofStudy):
     student.firstname = firstname 
     student.lastname = lastname
-    student.password = password
+    if password is not None:
+      student.set_password(password)
     student.contact = contact
     student.studentType = studentType
     student.yearOfStudy = yearofStudy

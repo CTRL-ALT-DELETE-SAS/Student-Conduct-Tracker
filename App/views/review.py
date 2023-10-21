@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, abort, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import current_user
-from App.controllers import Review
+from App.controllers import Review, Staff
 from App.controllers.user import get_staff
 from App.controllers.student import search_student
 
@@ -32,44 +32,54 @@ def view_review(review_id):
     if review:
         return jsonify(review.to_json())
     else: 
-        return 'Review does not exist', 401 
+        return 'Review does not exist', 404
 
 #Route to upvote review 
-@review_views.route('/review/<int:staff_id>/<int:review_id>/upvote', methods=['POST'])
-def upvote (review_id, staff_id):
-    if get_review(review_id):
-        staff = get_staff(staff_id)
+@review_views.route('/review/<int:review_id>/upvote', methods=['POST'])
+@jwt_required()
+def upvote (review_id):
+    if not jwt_current_user or not isinstance(jwt_current_user, Staff):
+      return "You are not authorized to upvote this review", 401
+      
+    review= get_review(review_id) 
+    if review:
+        staff = get_staff(jwt_current_user.ID)
         if staff:
-            current = get_review(review_id).upvotes
-            upvoteReview(review_id, staff)
-            if get_review(review_id).upvotes == current: 
-               return jsonify(get_review(review_id).to_json(), 'Review Already Upvoted'), 201 
+            current = review.upvotes
+            new_votes= upvoteReview(review_id, staff)
+            if new_votes == current: 
+               return jsonify(review.to_json(), 'Review Already Upvoted'), 201 
             else:
-                return jsonify(get_review(review_id).to_json(), 'Review Upvoted'), 200 
+                return jsonify(review.to_json(), 'Review Upvoted'), 200
         else: 
-            return jsonify(get_review(review_id).to_json(), 'Staff does not exist'), 404     
+            return jsonify('Staff does not exist'), 404     
     else: 
-        return'Review does not exist'
+        return'Review does not exist', 404
 
 #Route to downvote review 
-@review_views.route('/review/<int:staff_id>/<int:review_id>/downvote', methods=['POST'])
-def downvote (review_id, staff_id):
-    if get_review(review_id):
-        staff = get_staff(staff_id)
+@review_views.route('/review/<int:review_id>/downvote', methods=['POST'])
+@jwt_required()
+def downvote (review_id):
+    if not jwt_current_user or not isinstance(jwt_current_user, Staff):
+      return "You are not authorized to downvote this review", 401
+  
+    review= get_review(review_id) 
+    if review:
+        staff = get_staff(jwt_current_user.ID)
         if staff:
-            current = get_review(review_id).downvotes
-            downvoteReview(review_id, staff)
-            if get_review(review_id).downvotes == current: 
-               return jsonify(get_review(review_id).to_json(), 'Review Already Downvoted'), 201 
+            current = review.downvotes
+            new_votes= downvoteReview(review_id, staff)
+            if new_votes == current: 
+               return jsonify(review.to_json(), 'Review Already Downvoted'), 201 
             else:
-                return jsonify(get_review(review_id).to_json(), 'Review Downvoted'), 200 
+                return jsonify(review.to_json(), 'Review Downvoted Successfully'), 200 
         else: 
-            return jsonify(get_review(review_id).to_json(), 'Staff does not exist'), 404      
+            return jsonify(get_review(review_id).to_json(), 'Staff does not exist'), 404
     else: 
-        return'Review does not exist'
+        return'Review does not exist', 404
 
 # Route to get reviews by student ID
-@review_views.route("/reviews/student/<string:student_id>", methods=["GET"])
+@review_views.route("/student/<int:student_id>/reviews", methods=["GET"])
 def get_reviews_of_student(student_id):
     if search_student(student_id):
         reviews = get_reviews_for_student(student_id)
@@ -80,7 +90,7 @@ def get_reviews_of_student(student_id):
     return "Student does not exist", 404
 
 # Route to get reviews by staff ID
-@review_views.route("/reviews/staff/<string:staff_id>", methods=["GET"])
+@review_views.route("/staff/<string:staff_id>/reviews", methods=["GET"])
 def get_reviews_from_staff(staff_id):
     if get_staff(staff_id):
         reviews = get_reviews_by_staff(staff_id)
@@ -92,16 +102,16 @@ def get_reviews_from_staff(staff_id):
 
 # Route to edit a review
 @review_views.route("/review/edit/<int:review_id>", methods=["PUT"])
+@jwt_required()
 def review_edit(review_id):
     review = get_review(review_id)
-
     if not review:
-        return "Review not found", 404
+      return "Review not found", 404
+      
+    if not jwt_current_user or not isinstance(jwt_current_user, Staff) or review.reviewerID != jwt_current_user.ID :
+      return "You are not authorized to edit this review", 401
 
-    staff = get_staff(review.reviewerID)
-    
-    if review.reviewerID != staff.ID:
-        return "Not author of review", 401 
+    staff = get_staff(jwt_current_user.ID)
 
     data = request.json
 
@@ -109,31 +119,31 @@ def review_edit(review_id):
         return "Invalid request data", 400
     
     if data['isPositive'] not in (True, False):
-        return jsonify({"message": f"invalid Positivity ({data['isPositive']}). Positive: true or false"}), 400
+        return jsonify({"message": f"invalid Positivity value  ({data['isPositive']}). Positive: true or false"}), 400
 
-    edit_review(review, staff, data['isPositive'], data['comment'])
-    return jsonify(review.to_json(), 'Review Editted'), 200
+    updated= edit_review(review, staff, data['isPositive'], data['comment'])
+    if updated: 
+      return jsonify(review.to_json(), 'Review Edited'), 200
+    else:
+      return "Error updating review", 400
 
 
 
 # Route to delete a review
 @review_views.route("/review/delete/<int:review_id>", methods=["DELETE"])
+@jwt_required()
 def review_delete(review_id):
     review = get_review(review_id)
-
     if not review:
-        return "Review not found", 404
+      return "Review not found", 404
 
-    staff = get_staff(review.reviewerID)
-    
-    if review.reviewerID != staff.ID:
-        return "Not author of review", 401 
-    
-    if review.reviewerID != staff.ID:
-        return "Not author of review", 401 
+    if not jwt_current_user or not isinstance(jwt_current_user, Staff) or review.reviewerID != jwt_current_user.ID :
+      return "You are not authorized to delete this review", 401
+
+    staff = get_staff(jwt_current_user.ID)
    
     if delete_review(review, staff):
         return "Review deleted successfully", 200
     else:
-        return "Issues removing review", 404
+        return "Issue deleting review", 400
 
