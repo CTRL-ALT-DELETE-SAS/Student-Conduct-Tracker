@@ -8,7 +8,7 @@ def get_reviews_for_student(studentID):
     return db.session.query(Review).filter_by(studentID=studentID).all()
 
 def get_review(reviewID):
-    return db.session.query(Review).get(reviewID)
+    return Review.query.filter_by(ID=reviewID).first()
 
 def get_reviews_by_staff(staffID):
     return db.session.query(Review).filter_by(reviewerID=staffID).all()
@@ -20,7 +20,7 @@ def edit_review(review, staff, is_positive, comment):
         review.comment = comment
         db.session.add(review)
         db.session.commit()
-        return True
+        return review
     return None
 
 
