@@ -6,7 +6,7 @@ Document: https://docs.google.com/document/d/1nBgYIHf5PcRCvPKZNv9UnSjubzX9cqX5Fx
 
 Postman Documentation: https://documenter.getpostman.com/view/30409872/2s9YJjSzQF  
 
-Deloyed link: https://tracking-student-postgres-api.onrender.com
+Deloyed link: https://student-conduct-tracker-api.onrender.com
 
 
 ---
