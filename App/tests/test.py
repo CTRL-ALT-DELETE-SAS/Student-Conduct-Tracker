@@ -227,11 +227,9 @@ def test_search_students_action(client):
   headers = {'Authorization': f'Bearer {access_token}'}
 
   # Define test data for searching students
-  search_data = {
-      'searchTerm': 'Jim'
-  }
+  search_term= 'Jim'
 
-  response = client.get('/students/search', data=json.dumps(search_data), headers=headers, content_type='application/json')
+  response = client.get(f'/students/search/{search_term}', headers=headers, content_type='application/json')
   # Assuming a successful search returns a 200 status code
   assert response.status_code == 200
 
