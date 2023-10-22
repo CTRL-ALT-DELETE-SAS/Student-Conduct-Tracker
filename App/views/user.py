@@ -81,7 +81,7 @@ def create_staff_action():
 # Route to get a student by ID
 @user_views.route("/student/<string:id>", methods=["GET"])
 def get_student_action(id):
-    student = get_student(id)
+    student = get_student(str(id))
     if student:
         return jsonify(student.to_json()), 200
     else:
@@ -115,7 +115,7 @@ def update_student_action(id):
     if not jwt_current_user or not isinstance(jwt_current_user, Admin):
       return jsonify({"error" : "Unauthorized: You must be an admin to update students"}), 401
 
-    student = get_student(id)
+    student = get_student(str(id))
     if not student:
       return jsonify({"error": "Student not found"}), 404
 

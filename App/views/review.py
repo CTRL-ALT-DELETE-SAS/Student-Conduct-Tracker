@@ -79,7 +79,7 @@ def downvote (review_id):
         return'Review does not exist', 404
 
 # Route to get reviews by student ID
-@review_views.route("/student/<int:student_id>/reviews", methods=["GET"])
+@review_views.route("/student/<string:student_id>/reviews", methods=["GET"])
 def get_reviews_of_student(student_id):
     if search_student(student_id):
         reviews = get_reviews_for_student(student_id)
@@ -92,7 +92,7 @@ def get_reviews_of_student(student_id):
 # Route to get reviews by staff ID
 @review_views.route("/staff/<string:staff_id>/reviews", methods=["GET"])
 def get_reviews_from_staff(staff_id):
-    if get_staff(staff_id):
+    if get_staff(str(staff_id)):
         reviews = get_reviews_by_staff(staff_id)
         if reviews:
             return jsonify([review.to_json() for review in reviews]), 200
