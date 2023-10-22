@@ -13,13 +13,16 @@ def jwt_authenticate(id, password):
      
 	student = Student.query.filter_by(ID=id).first()
 	if student and student.check_password(password):
-		return create_access_token(identity=id)
-     
-	admin = Admin.query.filter_by(ID=id).first()
-	if admin and admin.check_password(password):
-			return create_access_token(identity=id)
-		
+		return create_access_token(identity=id)	
+    
 	return None
+
+def jwt_authenticate_admin(id, password):
+  admin = Admin.query.filter_by(ID=id).first()
+  if admin and admin.check_password(password):
+      return create_access_token(identity=id)
+
+  return None
 
 
 def login(id, password):    

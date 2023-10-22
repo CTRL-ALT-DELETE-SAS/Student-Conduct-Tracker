@@ -8,6 +8,7 @@ from.index import index_views
 from App.controllers import (
     create_user,
     jwt_authenticate,
+    jwt_authenticate_admin,
     login 
 )
 
@@ -43,6 +44,14 @@ def user_login_api():
 	if not token:
 		return jsonify(message='bad username or password given'), 401
 	return jsonify(access_token=token)
+
+@auth_views.route('/api/admin/login', methods=['POST'])
+def admin_login_api():
+  data = request.json
+  token = jwt_authenticate_admin(data['ID'], data['password'])
+  if not token:
+    return jsonify(message='bad username or password given'), 401
+  return jsonify(access_token=token)
 
 
 @auth_views.route('/api/identify', methods=['GET'])
