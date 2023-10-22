@@ -92,7 +92,7 @@ def get_reviews_of_student(student_id):
 # Route to get reviews by staff ID
 @review_views.route("/staff/<string:staff_id>/reviews", methods=["GET"])
 def get_reviews_from_staff(staff_id):
-    if get_staff(staff_id):
+    if get_staff(str(staff_id)):
         reviews = get_reviews_by_staff(staff_id)
         if reviews:
             return jsonify([review.to_json() for review in reviews]), 200

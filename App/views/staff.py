@@ -17,7 +17,7 @@ staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 
 @staff_views.route('/staff/<int:staff_id>', methods=['GET'])
 def get_staff_action(staff_id):
-    staff = get_staff(staff_id)
+    staff = get_staff(str(staff_id))
     if staff:
         return jsonify(staff.to_json())
     return 'Staff not found', 404
@@ -28,7 +28,7 @@ def create_review_action(student_id):
     if not jwt_current_user or not isinstance(jwt_current_user, Staff):
       return 'Unauthorized', 401
 
-    student= get_student(student_id)
+    student= get_student(str(student_id))
 
     if not student:
         return jsonify({"error": 'Student does not exist'}), 404
@@ -40,7 +40,7 @@ def create_review_action(student_id):
     if data['isPositive'] not in (True, False):
         return jsonify({"message": f"invalid Positivity ({data['isPositive']}). Positive: true or false"}), 400
 
-    if not get_staff(jwt_current_user.ID):
+    if not get_staff(str(jwt_current_user.ID)):
         return 'Staff does not exist', 404 
 
     review = create_review(jwt_current_user.ID, student_id, data['isPositive'], data['comment'])
