@@ -66,7 +66,7 @@ def setup_jwt(app):
 
   @jwt.user_identity_loader
   def user_identity_lookup(identity):
-    if identity.isdigit():
+    if isinstance(identity, int):
       admin = Admin.query.get(int(identity))
       if admin:
         return admin.ID
@@ -85,7 +85,7 @@ def setup_jwt(app):
   @jwt.user_lookup_loader
   def user_lookup_callback(_jwt_header, jwt_data):
       identity = jwt_data["sub"]
-      if identity.isdigit():
+      if isinstance(identity, int):
         admin = Admin.query.get(int(identity))
         if admin:
             return admin
