@@ -7,13 +7,13 @@ from .karma import Karma
 review_staff_upvoters = db.Table(
     'review_staff_upvoters',
     db.Column('reviewID', db.Integer, db.ForeignKey('review.ID')),
-    db.Column('staffID', db.Integer, db.ForeignKey('staff.ID')),
+    db.Column('staffID', db.String(10), db.ForeignKey('staff.ID')),
 )
 
 review_staff_downvoters = db.Table(
     'review_staff_downvoters',
     db.Column('reviewID', db.Integer, db.ForeignKey('review.ID')),
-    db.Column('staffID', db.Integer, db.ForeignKey('staff.ID')),
+    db.Column('staffID', db.String(10), db.ForeignKey('staff.ID')),
 )
 
 
