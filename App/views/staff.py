@@ -15,14 +15,14 @@ from App.controllers.staff import (
 
 staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 
-@staff_views.route('/staff/<int:staff_id>', methods=['GET'])
+@staff_views.route('/staff/<string:staff_id>', methods=['GET'])
 def get_staff_action(staff_id):
     staff = get_staff(str(staff_id))
     if staff:
         return jsonify(staff.to_json())
     return 'Staff not found', 404
 
-@staff_views.route('/student/<int:student_id>/reviews', methods=['POST'])
+@staff_views.route('/student/<string:student_id>/reviews', methods=['POST'])
 @jwt_required()
 def create_review_action(student_id):
     if not jwt_current_user or not isinstance(jwt_current_user, Staff):
