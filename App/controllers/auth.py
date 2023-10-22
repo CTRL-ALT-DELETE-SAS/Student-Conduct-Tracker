@@ -7,15 +7,15 @@ from App.models import Staff, Student, Admin, User
 
 
 def jwt_authenticate(id, password):
-	staff = Staff.query.filter_by(ID=id).first()
-	if staff and staff.check_password(password):
-		return create_access_token(identity=id)
-     
-	student = Student.query.filter_by(ID=id).first()
-	if student and student.check_password(password):
-		return create_access_token(identity=id)	
-    
-	return None
+  staff = Staff.query.filter_by(ID=id).first()
+  if staff and staff.check_password(password):
+    return create_access_token(identity=id)
+
+  student = Student.query.filter_by(ID=id).first()
+  if student and student.check_password(password):
+    return create_access_token(identity=id)	
+
+  return None
 
 def jwt_authenticate_admin(id, password):
   admin = Admin.query.filter_by(ID=id).first()
@@ -30,7 +30,7 @@ def login(id, password):
     staff = Staff.query.filter_by(ID=id).first()
     if staff and staff.check_password(password):
         return staff
-   
+
     student = Student.query.filter_by(ID=id).first()
     if student and student.check_password(password):
         return student
@@ -42,61 +42,62 @@ def login(id, password):
 
 
 def setup_flask_login(app):
-	login_manager = LoginManager()
-	login_manager.init_app(app)
-	
-	@login_manager.user_loader
-	def load_user(user_id):
-		staff = Staff.query.get(user_id)
-		if staff:
-			return staff
+  login_manager = LoginManager()
+  login_manager.init_app(app)
 
-		student = Student.query.get(user_id)
-		if student:
-			return student
+  @login_manager.user_loader
+  def load_user(user_id):
+    staff = Staff.query.get(user_id)
+    if staff:
+      return staff
 
-		admin = Admin.query.get(user_id)
-		if admin:
-			return admin
-		return login_manager
+    student = Student.query.get(user_id)
+    if student:
+      return student
+
+    admin = Admin.query.get(user_id)
+    if admin:
+      return admin
+    return login_manager
 
 
 def setup_jwt(app):
-		jwt = JWTManager(app)
-	
-		@jwt.user_identity_loader
-		def user_identity_lookup(identity):
-			staff= Staff.query.filter_by(ID=identity).one_or_none()
-			if staff:
-				return staff.ID
-			
-			admin= Admin.query.filter_by(ID=identity).one_or_none()
-			if admin:
-				return admin.ID
-      
-			student= Student.query.filter_by(ID=identity).one_or_none() 
-			if student:
-				return student.ID
+  jwt = JWTManager(app)
 
-			return None
- 
+  @jwt.user_identity_loader
+  def user_identity_lookup(identity):
+    if identity.isdigit():
+      admin = Admin.query.get(int(identity))
+      if admin:
+        return admin.ID
 
-		@jwt.user_lookup_loader
-		def user_lookup_callback(_jwt_header, jwt_data):
-				identity = jwt_data["sub"]
-				staff = Staff.query.get(identity)
-				if staff:
-						return staff
-		
-				student = Student.query.get(identity)
-				if student:
-						return student
-		
-				admin = Admin.query.get(identity)
-				if admin:
-						return admin
-		
-		return jwt
+    staff = Staff.query.filter_by(ID=identity).one_or_none()
+    if staff:
+      return staff.ID
+
+    student= Student.query.filter_by(ID=identity).one_or_none() 
+    if student:
+      return student.ID
+
+    return None
+
+
+  @jwt.user_lookup_loader
+  def user_lookup_callback(_jwt_header, jwt_data):
+      identity = jwt_data["sub"]
+      if identity.isdigit():
+        admin = Admin.query.get(int(identity))
+        if admin:
+            return admin
+
+      staff = Staff.query.filter_by(ID=identity).one_or_none()
+      if staff:
+          return staff
+
+      student = Student.query.filter_by(ID=identity).one_or_none()
+      if student:
+          return student
+  return jwt
 
 
 def student_required(func):
