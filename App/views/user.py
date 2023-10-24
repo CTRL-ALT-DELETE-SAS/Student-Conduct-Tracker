@@ -58,24 +58,25 @@ def create_student_action():
 @user_views.route("/user/create_staff", methods=["POST"])
 @jwt_required()
 def create_staff_action():
-	#get data from the post request body
-		data = request.json
-	
-	#validate data
-		if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
-			return jsonify({"error": "Invalid request data"}), 400
-
-		if get_student(data['staffID']) or get_staff(data['staffID']) or get_admin(data['staffID']):
-			return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 400
-
-		if jwt_current_user and isinstance(jwt_current_user, Admin):
-				staff = create_staff(jwt_current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
-				if staff:
-					return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
-				else:
-					return jsonify({"error": "Error creating staff"}), 400
-		else:
-				return jsonify({"error" : "Unauthorized: You must be an admin to create staff"}), 401
+  #get data from the post request body 
+  data = request.json
+  
+  #validate data
+  if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
+    return jsonify({"error": "Invalid request data"}), 400
+  
+  if get_student(data['staffID']) or get_staff(data['staffID']) or get_admin(data['staffID']):
+    return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 400
+  
+  if jwt_current_user and isinstance(jwt_current_user, Admin):
+    
+    staff = create_staff(jwt_current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
+    if staff:
+      return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
+    else:
+      return jsonify({"error": "Error creating staff"}), 400
+  else:
+    return jsonify({"error" : "Unauthorized: You must be an admin to create staff"}), 401
 
 
 # Route to get a student by ID

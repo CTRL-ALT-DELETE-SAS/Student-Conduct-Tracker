@@ -20,7 +20,7 @@ def jwt_authenticate(id, password):
 def jwt_authenticate_admin(id, password):
   admin = Admin.query.filter_by(ID=id).first()
   if admin and admin.check_password(password):
-      return create_access_token(identity=id)
+    return create_access_token(identity=id)
 
   return None
 
@@ -66,10 +66,9 @@ def setup_jwt(app):
 
   @jwt.user_identity_loader
   def user_identity_lookup(identity):
-    if isinstance(identity, int):
-      admin = Admin.query.get(int(identity))
-      if admin:
-        return admin.ID
+    admin = Admin.query.filter_by(ID=identity).one_or_none()
+    if admin:
+      return admin.ID
 
     staff = Staff.query.filter_by(ID=identity).one_or_none()
     if staff:
@@ -85,10 +84,10 @@ def setup_jwt(app):
   @jwt.user_lookup_loader
   def user_lookup_callback(_jwt_header, jwt_data):
       identity = jwt_data["sub"]
-      if isinstance(identity, int):
-        admin = Admin.query.get(int(identity))
-        if admin:
-            return admin
+
+      admin = Admin.query.filter_by(ID=identity).one_or_none()
+      if admin:
+          return admin
 
       staff = Staff.query.filter_by(ID=identity).one_or_none()
       if staff:

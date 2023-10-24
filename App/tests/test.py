@@ -171,7 +171,7 @@ def test_review_stuff(client):
 
   review = create_review(staff.ID, '2', True, "This is a great review")
 
-  staff2 = create_staff(admin, "Lia", "Su", "password", "4", "lsu@school.com", 10)
+  staff2 = create_staff(admin, "Lia", "Su", "password", "14", "lsu@school.com", 10)
   staff2_token = create_access_token(identity=staff2.ID)
   header2 = {'Authorization': f'Bearer {staff2_token}'}
 
