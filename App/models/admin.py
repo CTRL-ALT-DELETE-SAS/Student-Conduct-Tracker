@@ -4,10 +4,11 @@ from .staff import Staff
 from .user import User
 
 class Admin(User):
-	ID= db.Column(db.Integer, primary_key= True)
+	ID= db.Column(db.String, primary_key= True)
 
 	def __init__(self, firstname, lastname, password):
 		super().__init__(firstname, lastname, password)
+		self.ID = "A" + str(Admin.query.count() + 1)
 
 	def get_id(self):
 		return self.ID
@@ -20,7 +21,7 @@ class Admin(User):
 		db.session.commit()  # Commit to save the new student to the database
 		return newStudent 
 
-# add staff to the database
+	# add staff to the database
 	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
 		newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
 			
@@ -63,3 +64,10 @@ class Admin(User):
 		db.session.add(student)
 		db.session.commit()
 		return True
+	
+	def to_json(self):
+		return {
+	        "adminID": self.ID,
+    	    "firstname": self.firstname,
+        	"lastname": self.lastname,
+    	}
