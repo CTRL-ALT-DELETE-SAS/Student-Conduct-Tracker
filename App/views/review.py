@@ -26,7 +26,7 @@ def list_reviews():
     return jsonify([review.to_json() for review in reviews]), 200
 
 # Route to view a specific review and vote on it
-@review_views.route('/review/<int:review_id>', methods=['GET',])
+@review_views.route('/reviews/<int:review_id>', methods=['GET',])
 def view_review(review_id):
     review = get_review(review_id)
     if review:
@@ -35,7 +35,7 @@ def view_review(review_id):
         return 'Review does not exist', 404
 
 #Route to upvote review 
-@review_views.route('/review/<int:review_id>/upvote', methods=['POST'])
+@review_views.route('/reviews/<int:review_id>', methods=['POST'])
 @jwt_required()
 def upvote (review_id):
     if not jwt_current_user or not isinstance(jwt_current_user, Staff):
@@ -57,7 +57,7 @@ def upvote (review_id):
         return'Review does not exist', 404
 
 #Route to downvote review 
-@review_views.route('/review/<int:review_id>/downvote', methods=['POST'])
+@review_views.route('/reviews/<int:review_id>', methods=['POST'])
 @jwt_required()
 def downvote (review_id):
     if not jwt_current_user or not isinstance(jwt_current_user, Staff):
@@ -79,7 +79,7 @@ def downvote (review_id):
         return'Review does not exist', 404
 
 # Route to get reviews by student ID
-@review_views.route("/student/<string:student_id>/reviews", methods=["GET"])
+@review_views.route("/students/<string:student_id>/reviews", methods=["GET"])
 def get_reviews_of_student(student_id):
     if search_student(student_id):
         reviews = get_reviews_for_student(student_id)
@@ -130,7 +130,7 @@ def review_edit(review_id):
 
 
 # Route to delete a review
-@review_views.route("/review/delete/<int:review_id>", methods=["DELETE"])
+@review_views.route("/reviews/delete/<int:review_id>", methods=["DELETE"])
 @jwt_required()
 def review_delete(review_id):
     review = get_review(review_id)
