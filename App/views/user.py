@@ -25,7 +25,7 @@ def static_user_page():
   return send_from_directory('static', 'static-user.html')
 
 # Route to create a new student
-@user_views.route("/user/create_student", methods=["POST"])
+@user_views.route("/user/create", methods=["POST"])
 @jwt_required()
 def create_student_action():
     data = request.json #get data from post request
@@ -55,7 +55,7 @@ def create_student_action():
 
 
 # Route to create a new staff member
-@user_views.route("/user/create_staff", methods=["POST"])
+@user_views.route("/user/create", methods=["POST"])
 @jwt_required()
 def create_staff_action():
   #get data from the post request body 
@@ -80,7 +80,7 @@ def create_staff_action():
 
 
 # Route to get a student by ID
-@user_views.route("/student/<string:id>", methods=["GET"])
+@user_views.route("/students/<string:id>", methods=["GET"])
 def get_student_action(id):
     student = get_student(str(id))
     if student:
@@ -110,7 +110,7 @@ def get_all_staff_action():
 
 
 # Route to update a student's information
-@user_views.route("/student/<string:id>/update", methods=["PUT"])
+@user_views.route("/students/<string:id>", methods=["PUT"])
 @jwt_required()
 def update_student_action(id):
     if not jwt_current_user or not isinstance(jwt_current_user, Admin):
