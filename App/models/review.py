@@ -1,7 +1,7 @@
 from App.database import db
 from .student import Student
 from datetime import datetime
-from .karma import Karma
+from .karma import *
 
 # Define the association table for staff upvotes on reviews
 review_staff_upvoters = db.Table(
@@ -51,6 +51,7 @@ class Review(db.Model):
   isPositive = db.Column(db.Boolean, nullable=False)
   created = db.Column(db.DateTime, default=datetime.utcnow)
   comment = db.Column(db.String(400), nullable=False)
+  karmaStrategy = None
 
   # initialize the review. when it is created the date is automatically gotten and votes are at 0
   def __init__(self, reviewer, student, isPositive, comment):
@@ -62,10 +63,17 @@ class Review(db.Model):
     self.upvotes = 0
     self.downvotes = 0
     self.created = datetime.now()
+    self.set_strategy()
 
   def get_id(self):
     return self.ID
+  
+  def set_strategy(self):
+    if self.isPositive == True:
+      self.karmaStrategy = CalculatePositiveKarmaStrategy()
 
+    if self.isPositive == False:
+      self.karmaStrategy = CalculateNegativeKarmaStrategy()
 
 #allows the comment and whether the review is positive to be edited if the staff member is the creator of the review, returns none if not
 
@@ -109,7 +117,7 @@ class Review(db.Model):
 
       # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
       if student.karmaID is None:
-        karma = Karma(score=0.0, rank=-99)
+        karma = Karma(self.studentID, score=0.0, rank=-99)
         db.session.add(karma)  # Add the Karma record to the session
         db.session.flush()  # Ensure the Karma record gets an ID
         student.karmaID = karma.karmaID  # Set the student's karmaID to the new Karma record's ID
@@ -144,7 +152,7 @@ class Review(db.Model):
 
       # Check if the student has a Karma record (karmaID) and create a new Karma record for them if not
       if student.karmaID is None:
-        karma = Karma(score=0.0, rank=-99)
+        karma = Karma(self.studentID, score=0.0, rank=-99)
         db.session.add(karma)  # Add the Karma record to the session
         db.session.flush()  # Ensure the Karma record gets an ID
         db.session.commit()

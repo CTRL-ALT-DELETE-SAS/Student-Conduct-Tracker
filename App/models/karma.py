@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from App.database import db
 from .student import Student
 
@@ -5,10 +6,12 @@ from .student import Student
 class Karma(db.Model):
   __tablename__ = "karma"
   karmaID = db.Column(db.Integer, primary_key=True)
+  studentID = db.Column(db.String(10), db.ForeignKey('student.ID', use_alter=True))
   score = db.Column(db.Float, nullable=False, default=0.0)
   rank = db.Column(db.Integer, nullable=False, default=-99)
 
-  def __init__(self, score=0.0, rank=-99):
+  def __init__(self, studentID, score=0.0, rank=-99):
+    self.studentID= studentID
     self.score = score
     self.rank = rank
 
@@ -18,20 +21,13 @@ class Karma(db.Model):
 # Calculate the karma score for the provided student based on reviews
 
   def calculateScore(self, student):
-    goodKarma = 0
-    badKarma = 0
+    karma = 0
 
-    # Iterate through reviews associated with the student
+    # Iterate through reviews associated with the student and calculate the karma
     for review in student.reviews:
-      if review.isPositive == True:  #if review is positive then upvotes on the review contributes to good karma
-        goodKarma += review.upvotes
-        badKarma += review.downvotes
-      else:  #if review is not positive then upvotes on the review contributes to bad karma
-        badKarma += review.upvotes
-        goodKarma += review.downvotes
+      karma += review.karmaStrategy.calculateScore(review)
 
-# Calculate the karma score
-    self.score = goodKarma - badKarma
+    self.score= karma
 
     # connect the karma record to the student
     student.karmaID = self.karmaID
@@ -79,3 +75,21 @@ class Karma(db.Model):
     if karma:
       return karma.score
     return None
+
+#strategy interface
+class KarmaCalculationStrategy(ABC):
+  @abstractmethod
+  def calculateScore(self, review):
+    pass
+
+class CalculatePositiveKarmaStrategy(KarmaCalculationStrategy):
+  def calculateScore(self, review):
+    goodKarma = review.upvotes
+    badKarma = review.downvotes
+    return (goodKarma - badKarma)
+  
+class CalculateNegativeKarmaStrategy(KarmaCalculationStrategy):
+  def calculateScore(self, review):
+    goodKarma = review.downvotes
+    badKarma = review.upvotes
+    return (goodKarma - badKarma)

@@ -8,6 +8,7 @@ from App.database import db, get_migrate
 from App.main import create_app
 from App.controllers import ( create_user, create_staff, create_student, get_all_users_json, get_all_users )
 from App.views import (generate_random_contact_number)
+from App.models import *
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -20,36 +21,37 @@ def initialize():
   db.drop_all()
   db.create_all()
   admin= create_user('bob', 'boblast' , 'bobpass')
-  for ID in  range(2, 50): 
-    staff= create_staff(admin, 
-          randomname.get_name(), 
-          randomname.get_name(), 
-          randomname.get_name(), 
-          str(ID), 
-          randomname.get_name() + '@schooling.com', 
-          str(random.randint(1, 15))
-      )
-    db.session.add(staff)
-    db.session.commit()
-
-  for ID in range(50, 150): 
-      contact= generate_random_contact_number()
+  '''for ID in range(50, 150): 
       student= create_student(admin, str(ID),
           randomname.get_name(), 
           randomname.get_name(), 
-          randomname.get_name(),
-          contact,
           random.choice(['Full-Time','Part-Time', 'Evening']),
-          str(random.randint(1, 8))
+          str(random.randint(2010, 2020))
       )
       db.session.add(student)
-      db.session.commit()
+      db.session.commit()'''
 
   return jsonify({'message': 'Database initialized'}),201
 
 '''
 User Commands
 '''
+
+#Use for testing the models. Would be deleted eventually as the controllers and views are updated
+@app.cli.command("tm", help="Testing models")
+def test():
+    db.drop_all()
+    db.create_all()
+    student= Student("1234" , "sally", "trim", "full-time", 2020)
+    s1= Staff("55", "Jen", "Jlast", "pass", "email", 13)
+    s2= Staff("54", "Sen", "Shin", "pass2", "email", 1)
+    s3= Staff("57", "Sally", "Blue", "pass3", "email", 10)
+    s4= Staff("59", "Rui", "Pear", "pass4", "email", 18)
+    r=s1.createReview(student, True, "Positive")
+    r.upvoteReview(s2)
+    r.downvoteReview(s3)
+    r.upvoteReview(s4)
+    print(student.to_json())
 
 # Commands can be organized using groups
 
