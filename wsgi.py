@@ -47,11 +47,20 @@ def test():
     s2= Staff("54", "Sen", "Shin", "pass2", "email", 1)
     s3= Staff("57", "Sally", "Blue", "pass3", "email", 10)
     s4= Staff("59", "Rui", "Pear", "pass4", "email", 18)
+    s5= Staff("70", "Ren", "Lue", "pass5", "email", 13)
     r=s1.createReview(student, True, "Positive")
     r.upvoteReview(s2)
     r.downvoteReview(s3)
     r.upvoteReview(s4)
+    r.upvoteReview(s5)
+
+    student2= Student("233", "Luis", "Thompson", "full-time", 2021)
+    r2= s2.createReview(student2, True, "Another positive")
+    r2.upvoteReview(s4)
+
     print(student.to_json())
+    print(student2.to_json())
+    print("Rankings: \n", s1.getStudentRankings())
 
 # Commands can be organized using groups
 

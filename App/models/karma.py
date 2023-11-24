@@ -16,11 +16,14 @@ class Karma(db.Model):
     self.rank = rank
 
   def to_json(self):
-    return {"karmaID": self.karmaID, "score": self.score, "rank": self.rank}
+    return {"karmaID": self.karmaID, 
+            "studentID": self.studentID,
+            "score": self.score, 
+            "rank": self.rank}
 
 # Calculate the karma score for the provided student based on reviews
 
-  def calculateScore(self, student):
+  def calculate_total_score(self, student):
     karma = 0
 
     # Iterate through reviews associated with the student and calculate the karma
@@ -31,10 +34,6 @@ class Karma(db.Model):
 
     # connect the karma record to the student
     student.karmaID = self.karmaID
-
-    # Commit the changes to the database
-    db.session.add(self)
-    db.session.commit()
 
     return self.score
 

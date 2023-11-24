@@ -16,7 +16,6 @@ review_staff_downvoters = db.Table(
     db.Column('staffID', db.String(10), db.ForeignKey('staff.ID')),
 )
 
-
 class Review(db.Model):
   __tablename__ = 'review'
   ID = db.Column(db.Integer, primary_key=True)
@@ -49,7 +48,7 @@ class Review(db.Model):
   upvotes = db.Column(db.Integer, nullable=False)
   downvotes = db.Column(db.Integer, nullable=False)
   isPositive = db.Column(db.Boolean, nullable=False)
-  created = db.Column(db.DateTime, default=datetime.utcnow)
+  created = db.Column(db.DateTime, default= (datetime.utcnow()))
   comment = db.Column(db.String(400), nullable=False)
   karmaStrategy = None
 
@@ -124,14 +123,14 @@ class Review(db.Model):
 
       # Update Karma for the student
       student_karma = Karma.query.get(student.karmaID)
-      student_karma.calculateScore(student)
+      student_karma.calculate_total_score(student)
       student_karma.updateRank()
       db.session.commit()
 
     return self.upvotes
 
-  #adds 1 to the downvotes for the review when called
 
+  #adds 1 to the downvotes for the review when called
   def downvoteReview(self, staff): 
     if staff in self.staffDownvoters:  # If they downvoted the review already, return current votes
       return self.downvotes
@@ -147,6 +146,7 @@ class Review(db.Model):
 
       db.session.add(self)
       db.session.commit()
+      
       # Retrieve the associated Student object using studentID
       student = Student.query.get(self.studentID)
 
@@ -160,7 +160,7 @@ class Review(db.Model):
 
   # Update Karma for the student
       student_karma = Karma.query.get(student.karmaID)
-      student_karma.calculateScore(student)
+      student_karma.calculate_total_score(student)
       student_karma.updateRank()
 
     return self.downvotes
