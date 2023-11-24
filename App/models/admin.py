@@ -13,7 +13,7 @@ class Admin(User):
 	def get_id(self):
 		return self.ID
 
-	#add student to the database
+	# create a student 
 	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
 		newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
 		
@@ -21,7 +21,7 @@ class Admin(User):
 		db.session.commit()  # Commit to save the new student to the database
 		return newStudent 
 
-	# add staff to the database
+	# create a staff 
 	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
 		newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
 			
