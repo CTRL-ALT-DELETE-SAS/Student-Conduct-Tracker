@@ -8,8 +8,7 @@ from flask_jwt_extended import current_user as jwt_current_user
 from flask_jwt_extended import jwt_required
 
 from App.controllers.staff import (
-    search_students_searchTerm, 
-    get_student_rankings,
+    search_students_searchTerm,
     create_review
 )
 
@@ -60,15 +59,3 @@ def search_students(search_term):
       return jsonify({"message": f"No students found with search term {search_term}"}), 204
   else:
     return jsonify({"message": "You are not authorized to perform this action"}), 401
-
-@staff_views.route('/rankings', methods=['GET'])
-@jwt_required()
-def get_karma_rankings():
-  if jwt_current_user or isinstance(jwt_current_user, Staff):
-    rankings = get_student_rankings(jwt_current_user) 
-    if rankings:
-      return jsonify(rankings), 200
-    else:
-      return jsonify({"message": "No rankings found"}), 204
-  else:
-    return jsonify({"message": "You are not authorized to perform this action"}), 401 

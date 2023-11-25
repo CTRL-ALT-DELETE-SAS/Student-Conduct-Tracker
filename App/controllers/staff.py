@@ -11,16 +11,8 @@ def create_review(staffID, studentID, is_positive, comment):
         return review
     return None
 
-def get_staff_reviews(staff_id):
-    staff = get_staff(staff_id)
-    if staff:
-        return staff.getReviewsByStaff(staff)
-
 def search_students_searchTerm(staff, searchTerm):
     students = staff.searchStudent(searchTerm)
     if students:
       return students
     return None
-  
-def get_student_rankings(staff):
-    return staff.getStudentRankings()

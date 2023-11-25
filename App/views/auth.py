@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from.index import index_views
 
 from App.controllers import (
-    create_user,
+    create_admin,
     jwt_authenticate,
     jwt_authenticate_admin,
     login 
