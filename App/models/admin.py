@@ -4,46 +4,40 @@ from .staff import Staff
 from .user import User
 
 class Admin(User):
-	ID= db.Column(db.String, primary_key= True)
+	id = db.Column(db.String, primary_key= True)
 
 	def __init__(self, firstname, lastname, password):
 		super().__init__(firstname, lastname, password)
-		self.ID = "A" + str(Admin.query.count() + 1)
+		self.id = "A" + str(Admin.query.count() + 1)
 
-	def get_id(self):
-		return self.ID
+	def addStudent(self, id, firstname, lastname, contact, studentType, yearofStudy):
+		newStudent= Student(id, firstname, lastname, contact, studentType, yearofStudy)
+		try:
+			db.session.add(newStudent)
+			db.session.commit()
+			return newStudent
+		except:
+			return False
 
-	# create a student 
-	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
-		newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
-		
-		db.session.add(newStudent)
-		db.session.commit()  # Commit to save the new student to the database
-		return newStudent 
 
-	# create a staff 
-	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
-		newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
-			
-		db.session.add(newStaff)
-		db.session.commit()  # Commit to save the new staff to the database
-		return newStaff
-
-	#takes a studentID, string for field_to_update and new_value . Updates the  relative field for the student
+	def addStaff(self, id, firstname, lastname, password, email):
+		newStaff= Staff(id, firstname, lastname, password, email)	
+		try:
+			db.session.add(newStaff)
+			db.session.commit()
+			return newStaff
+		except:
+			return False
+	
 	def updateStudent(self, studentID, field_to_update, new_value):
-		# List of fields that can be updated for a student record
-		allowed_fields = ["ID", "contact", "firstname", "lastname", "password", "studenttype", "yearofstudy"]
-
-		# Normalize the input field name by converting it to lowercase and replacing '-', '_', ' ' with ''
+		allowed_fields = ["id", "firstname", "lastname", "contact", "studenttype", "yearofstudy"]
 		input_field = field_to_update.lower().replace('-', '').replace('_', '').replace(' ', '')
 
-	# Retrieve the student record based on student id
-		student = Student.query.filter_by(ID=studentID).first()
+		student = Student.query.filter_by(id=studentID).first()
 
 		if student is None:
 			return "Student not found"
 
-		# Check if the specified field exists in the Student model, change column names on model to lowercase so that it could be compared to the normalized input
 		found_field = None
 		for field in Student.__table__.columns.keys():
 			if field.lower() == input_field:
@@ -67,7 +61,7 @@ class Admin(User):
 	
 	def to_json(self):
 		return {
-	        "adminID": self.ID,
+	        "id": self.id,
     	    "firstname": self.firstname,
-        	"lastname": self.lastname,
+        	"lastname": self.lastname
     	}

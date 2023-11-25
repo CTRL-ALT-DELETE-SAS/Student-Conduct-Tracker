@@ -17,7 +17,10 @@ class User(db.Model, UserMixin):
     self.set_password(password)
 
   def to_json(self):
-    return {'firstname': self.firstname, 'lastname': self.lastname}
+    return {
+      'firstname': self.firstname, 
+      'lastname': self.lastname
+    }
 
   def set_password(self, password):
     """Create hashed password."""
