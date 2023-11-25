@@ -6,14 +6,14 @@ from .karma import Karma
 # Define the association table for staff upvotes on reviews
 review_staff_upvoters = db.Table(
     'review_staff_upvoters',
-    db.Column('reviewID', db.Integer, db.ForeignKey('review.ID')),
-    db.Column('staffID', db.String(10), db.ForeignKey('staff.ID')),
+    db.Column('reviewID', db.Integer, db.ForeignKey('review.id')),
+    db.Column('staffID', db.String(10), db.ForeignKey('staff.id')),
 )
 
 review_staff_downvoters = db.Table(
     'review_staff_downvoters',
-    db.Column('reviewID', db.Integer, db.ForeignKey('review.ID')),
-    db.Column('staffID', db.String(10), db.ForeignKey('staff.ID')),
+    db.Column('reviewID', db.Integer, db.ForeignKey('review.id')),
+    db.Column('staffID', db.String(10), db.ForeignKey('staff.id')),
 )
 
 
@@ -97,7 +97,7 @@ class Review(db.Model):
   def downvoteReview(self, staff): 
     if staff in self.staffDownvoters:
       return True
-
+    
     else:
       if staff not in self.staffDownvoters: 
         self.downvotes += 1
@@ -115,7 +115,7 @@ class Review(db.Model):
       except:
         db.session.rollback()
         return False
-
+    
     return False
 
   def notify_student(self, student):

@@ -6,7 +6,7 @@ import random
 import randomname
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_user, create_staff, create_student, get_all_users_json, get_all_users )
+from App.controllers import ( create_admin, create_staff, create_student, get_all_users_json, get_all_users )
 from App.views import (generate_random_contact_number)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -17,35 +17,22 @@ migrate = get_migrate(app)
 # This command creates and initializes the database
 @app.cli.command("init", help="Creates and initializes the database")
 def initialize():
-  db.drop_all()
-  db.create_all()
-  admin= create_user('bob', 'boblast' , 'bobpass')
-  for ID in  range(2, 50): 
-    staff= create_staff(admin, 
-          randomname.get_name(), 
-          randomname.get_name(), 
-          randomname.get_name(), 
-          str(ID), 
-          randomname.get_name() + '@schooling.com', 
-          str(random.randint(1, 15))
-      )
-    db.session.add(staff)
+    db.drop_all()
+    db.create_all()
+    admin=create_admin('bob', 'boblast' , 'bobpass')
+    
+    for id in range(2, 50): 
+        staff= create_staff(admin, str(id), randomname.get_name(), randomname.get_name(), randomname.get_name(), randomname.get_name() + '@schooling.com')
+        db.session.add(staff)
+        db.session.commit()
+
+    for id in range(50, 150): 
+    contact= generate_random_contact_number()
+    student= create_student(admin, str(id), randomname.get_name(), randomname.get_name(), contact, random.choice(['Full-Time','Part-Time', 'Evening']), str(random.randint(1, 8)))
+    db.session.add(student)
     db.session.commit()
 
-  for ID in range(50, 150): 
-      contact= generate_random_contact_number()
-      student= create_student(admin, str(ID),
-          randomname.get_name(), 
-          randomname.get_name(), 
-          randomname.get_name(),
-          contact,
-          random.choice(['Full-Time','Part-Time', 'Evening']),
-          str(random.randint(1, 8))
-      )
-      db.session.add(student)
-      db.session.commit()
-
-  return jsonify({'message': 'Database initialized'}),201
+    return jsonify({'message': 'Database initialized'}),201
 
 '''
 User Commands
@@ -58,11 +45,22 @@ User Commands
 user_cli = AppGroup('user', help='User object commands') 
 
 # Then define the command and any parameters and annotate it with the group (@)
-@user_cli.command("create", help="Creates a user")
+@user_cli.command("create_admin", help="Creates an admin")
 @click.argument("firstname", default="rob")
+@click.argument("lastname", default="roblast")
 @click.argument("password", default="robpass")
-def create_user_command(firstname, password):
-    create_user(firstname, password)
+def create_admin_command(firstname, lastname, password):
+    create_admin(firstname, lastname, password)
+    print(f'{firstname} created!')
+
+@user_cli.command("create_staff", help="Creates an staff")
+@click.argument("id", default="10")
+@click.argument("firstname", default="rick")
+@click.argument("lastname", default="ricklast")
+@click.argument("password", default="rickpass")
+@click.argument("email", default="rob@schooling.com")
+def create_staff_command(id, firstname, lastname, password, email):
+    create_staff(id, firstname, lastname, password, email)
     print(f'{firstname} created!')
 
 # this command will be : flask user create bob bobpass

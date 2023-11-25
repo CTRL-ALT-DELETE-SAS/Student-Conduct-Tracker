@@ -21,8 +21,8 @@ def generate_random_contact_number():
 def init():
   db.drop_all()
   db.create_all()
-  admin= create_user('bob', 'boblast' , 'bobpass')
-  for ID in  range(2, 50): 
+  admin= create_admin('bob', 'boblast' , 'bobpass')
+  for id in  range(2, 50): 
     staff= create_staff(admin, 
           randomname.get_name(), 
           randomname.get_name(), 
