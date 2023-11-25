@@ -13,21 +13,13 @@ class Admin(User):
 	def get_id(self):
 		return self.ID
 
-	#add student to the database
-	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
-		newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
+	#add student info to the database
+	def addStudentInformation(self, id, firstname, lastname, studentType, yearofEnrollment):
+		newStudent= Student(id, firstname, lastname, studentType, yearofEnrollment)
 		
 		db.session.add(newStudent)
 		db.session.commit()  # Commit to save the new student to the database
 		return newStudent 
-
-	# add staff to the database
-	def addStaff(self, id, firstname, lastname, password, email, teachingExperience):
-		newStaff= Staff(id, firstname, lastname, password, email, teachingExperience)
-			
-		db.session.add(newStaff)
-		db.session.commit()  # Commit to save the new staff to the database
-		return newStaff
 
 	#takes a studentID, string for field_to_update and new_value . Updates the  relative field for the student
 	def updateStudent(self, studentID, field_to_update, new_value):
