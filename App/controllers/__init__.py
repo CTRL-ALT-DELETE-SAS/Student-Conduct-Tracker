@@ -1,6 +1,4 @@
-from .user import *
+from .admin import *
 from .auth import *
 from .review import *
-from .student import *
-from .karma import *
 from .staff import * 

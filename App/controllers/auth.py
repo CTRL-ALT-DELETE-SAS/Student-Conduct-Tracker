@@ -2,11 +2,10 @@ from functools import wraps
 from flask_login import current_user, LoginManager, login_user
 from App.database import db
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager
-
 from App.models import Staff, Admin, User
 
 
-def jwt_authenticate(id, password):
+def jwt_authenticate_staff(id, password):
   staff = Staff.query.filter_by(id=id).first()
   if staff and staff.check_password(password):
     return create_access_token(identity=id)
@@ -16,7 +15,6 @@ def jwt_authenticate_admin(id, password):
   admin = Admin.query.filter_by(id=id).first()
   if admin and admin.check_password(password):
     return create_access_token(identity=id)
-
   return None
 
 
