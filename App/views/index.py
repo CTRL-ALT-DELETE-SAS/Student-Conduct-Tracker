@@ -1,10 +1,9 @@
 import random
 from flask import Blueprint, render_template, jsonify
 from App.models import db
-from App.controllers import create_user, create_staff, create_student
+from App.controllers import *
 import randomname
 
-from App.models.admin import Admin
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
 
@@ -19,32 +18,15 @@ def generate_random_contact_number():
 
 @index_views.route('/init', methods=['POST'])
 def init():
-  db.drop_all()
-  db.create_all()
-  admin= create_admin('bob', 'boblast' , 'bobpass')
-  for id in  range(2, 50): 
-    staff= create_staff(admin, 
-          randomname.get_name(), 
-          randomname.get_name(), 
-          randomname.get_name(), 
-          str(ID), 
-          randomname.get_name() + '@schooling.com', 
-          str(random.randint(1, 15))
-      )
-    db.session.add(staff)
-    db.session.commit()
+    db.drop_all()
+    db.create_all()
+    admin= create_admin('bob', 'boblast' , 'bobpass')
+      
+    staff = create_staff(admin, '0012', 'John', 'Mann,' 'johnpass', 'johnmann@schooling.com')
+    staff = create_staff(admin, '0013', 'Jane', 'Anne,' 'janepass', 'janeanne@schooling.com')
 
-  for ID in range(50, 150): 
-      contact= generate_random_contact_number()
-      student= create_student(admin, str(ID),
-          randomname.get_name(), 
-          randomname.get_name(), 
-          randomname.get_name(),
-          contact,
-          random.choice(['Full-Time','Part-Time', 'Evening']),
-          str(random.randint(1, 8))
-      )
-      db.session.add(student)
-      db.session.commit()
+    student = create_student(admin, '0021', 'Nick', 'Dell', generate_random_contact_number(), random.choice(['Full-Time','Part-Time', 'Evening']), str(random.randint(1, 8)))
+    student = create_student(admin, '0022', 'John', 'Biz', generate_random_contact_number(), random.choice(['Full-Time','Part-Time', 'Evening']), str(random.randint(1, 8)))
+    
 
-  return jsonify({'message': 'Database initialized'}),201
+    return jsonify({'message': 'Database initialized'}),201
