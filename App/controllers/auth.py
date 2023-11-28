@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token, jwt_required, JWTManager
 
 from App.models import Staff, Admin, User
 
+jwt = JWTManager()
 
 def jwt_authenticate(id, password, model):
     user = model.query.filter_by(ID=id).first()
@@ -52,19 +53,19 @@ def setup_jwt(app):
         return None
 
 
-  @jwt.user_lookup_loader
-  def user_lookup_callback(_jwt_header, jwt_data):
-      identity = jwt_data["sub"]
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
 
-      admin = Admin.query.filter_by(ID=identity).one_or_none()
-      if admin:
-          return admin
+    admin = Admin.query.filter_by(ID=identity).one_or_none()
+    if admin:
+        return admin
 
-      staff = Staff.query.filter_by(ID=identity).one_or_none()
-      if staff:
-          return staff
+    staff = Staff.query.filter_by(ID=identity).one_or_none()
+    if staff:
+        return staff
 
-  return jwt
+    return jwt
 
 def staff_required(func):
     @wraps(func)
