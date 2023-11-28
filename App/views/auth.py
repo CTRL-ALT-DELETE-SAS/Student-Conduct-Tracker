@@ -19,6 +19,24 @@ auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 def identify_page():
     return jsonify({'message': f"username: {current_user.username}, id : {current_user.id}"})
 
+# Route to create a new staff member
+@auth_views.route("/signup", methods=["POST"])
+def create_staff_action():
+  #get data from the post request body 
+  data = request.json
+  
+  #validate data
+  if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
+    return jsonify({"error": "Invalid request data"}), 400
+  
+  if get_student(data['staffID']) or get_staff(data['staffID']) or get_admin(data['staffID']):
+    return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 400
+  else:    
+    staff = create_staff(jwt_current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
+    if staff:
+      return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
+    else:
+      return jsonify({"error": "Error creating staff"}), 400
 
 @auth_views.route('/login', methods=['POST'])
 def login_action():
@@ -29,12 +47,6 @@ def login_action():
         token = jwt_authenticate(data['ID'], data['password'])
         return 'user logged in!'
     return 'bad username or password given', 401
-
-
-@auth_views.route('/logout', methods=['GET'])
-def logout_action():
-    logout_user()
-    return redirect('/'), jsonify('logged out!')
    
 
 @auth_views.route('/api/login', methods=['POST'])
@@ -58,3 +70,8 @@ def admin_login_api():
 @jwt_required()
 def identify_user_action():
     return jsonify({'message': f"firstname: {jwt_current_user.firstname}, lastname: {jwt_current_user.lastname}, id : {jwt_current_user.ID}"})
+
+@auth_views.route('/logout', methods=['GET'])
+def logout_action():
+    logout_user()
+    return redirect('/'), jsonify('logged out!')
