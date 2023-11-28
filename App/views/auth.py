@@ -34,7 +34,7 @@ def create_staff_action():
   else:    
     staff = create_staff(jwt_current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
     if staff:
-      return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
+      return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 200
     else:
       return jsonify({"error": "Error creating staff"}), 400
 
@@ -54,7 +54,7 @@ def user_login_api():
 	data = request.json
 	token = jwt_authenticate(data['ID'], data['password'])
 	if not token:
-		return jsonify(message='bad username or password given'), 401
+		return jsonify(message='invalid credentials'), 400
 	return jsonify(access_token=token)
 
 @auth_views.route('/api/admin/login', methods=['POST'])
@@ -62,7 +62,7 @@ def admin_login_api():
   data = request.json
   token = jwt_authenticate_admin(data['ID'], data['password'])
   if not token:
-    return jsonify(message='bad username or password given'), 401
+    return jsonify(message='invalid credentials'), 400
   return jsonify(access_token=token)
 
 
