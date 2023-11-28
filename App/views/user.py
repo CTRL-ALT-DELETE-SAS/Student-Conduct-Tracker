@@ -24,46 +24,6 @@ def get_users_action():
 def static_user_page():
   return send_from_directory('static', 'static-user.html')
 
-# Route to create a new student
-@user_views.route("/user/stdents", methods=["POST"])
-@jwt_required()
-def create_students_action():
-    data = request.json #get data from post request
-
-    if not data['firstname'] or not data['lastname'] or not data['password'] or not data['studentID'] or not data['contact'] or not data['studentType'] or not data['yearOfStudy']:
-      return jsonify({"error": "Invalid request data"}), 400
-
-      #check if id exists in the database
-    if get_student(data['studentID']) or get_staff(data['studentID']) or get_admin(data['studentID']):
-      return jsonify({"error": f"A user already uses the ID {data['studentID']}"}), 500
-
-  #validate student type
-    student_type = data['studentType'].strip().title()
-    if student_type not in ('Full-Time', 'Part-Time', 'Evening'):
-      return jsonify({"message": f"invalid student type ({data['studentType']}). Types: Full-Time, Part-Time and Evening"}), 400 
-
-  #validate admin user
-    if jwt_current_user and isinstance(jwt_current_user, Admin):
-      student = create_student(jwt_current_user, data['studentID'],firstname=data['firstname'], lastname=data['lastname'], password=data['password'], contact=data['contact'], studentType=student_type, yearofStudy=data['yearOfStudy'])
-
-      if student:
-        return jsonify({"message": f"Student created with ID {student.ID}"}, student.to_json()), 201
-      else: 
-        return jsonify({"error": "Error creating student"}), 400
-    else:
-      return jsonify({"error" : "Unauthorized: You must be an admin to create students"}), 401
-
-
-# Route to get a student by ID
-@user_views.route("/students/<string:id>", methods=["GET"])
-def get_student_action(id):
-    student = get_student(str(id))
-    if student:
-        return jsonify(student.to_json()), 200
-    else:
-        return "Student not found", 404
-
-
 # Route to get all students
 @user_views.route("/students", methods=["GET"])
 def get_all_students_action():
