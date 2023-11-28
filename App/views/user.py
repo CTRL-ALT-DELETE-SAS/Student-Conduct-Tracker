@@ -25,9 +25,9 @@ def static_user_page():
   return send_from_directory('static', 'static-user.html')
 
 # Route to create a new student
-@user_views.route("/user/create", methods=["POST"])
+@user_views.route("/user/stdents", methods=["POST"])
 @jwt_required()
-def create_student_action():
+def create_students_action():
     data = request.json #get data from post request
 
     if not data['firstname'] or not data['lastname'] or not data['password'] or not data['studentID'] or not data['contact'] or not data['studentType'] or not data['yearOfStudy']:
@@ -55,7 +55,7 @@ def create_student_action():
 
 
 # Route to create a new staff member
-@user_views.route("/user/create", methods=["POST"])
+@user_views.route("/user/signup", methods=["POST"])
 @jwt_required()
 def create_staff_action():
   #get data from the post request body 
@@ -67,16 +67,12 @@ def create_staff_action():
   
   if get_student(data['staffID']) or get_staff(data['staffID']) or get_admin(data['staffID']):
     return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 400
-  
-  if jwt_current_user and isinstance(jwt_current_user, Admin):
-    
+  else:    
     staff = create_staff(jwt_current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
     if staff:
       return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
     else:
       return jsonify({"error": "Error creating staff"}), 400
-  else:
-    return jsonify({"error" : "Unauthorized: You must be an admin to create staff"}), 401
 
 
 # Route to get a student by ID
