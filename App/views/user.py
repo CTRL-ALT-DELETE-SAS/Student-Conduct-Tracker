@@ -54,27 +54,6 @@ def create_students_action():
       return jsonify({"error" : "Unauthorized: You must be an admin to create students"}), 401
 
 
-# Route to create a new staff member
-@user_views.route("/user/signup", methods=["POST"])
-@jwt_required()
-def create_staff_action():
-  #get data from the post request body 
-  data = request.json
-  
-  #validate data
-  if not data['firstname'] or not data['lastname'] or not data['password'] or not data['staffID'] or not data['email'] or not data['teachingExperience']:
-    return jsonify({"error": "Invalid request data"}), 400
-  
-  if get_student(data['staffID']) or get_staff(data['staffID']) or get_admin(data['staffID']):
-    return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 400
-  else:    
-    staff = create_staff(jwt_current_user, data['firstname'], data['lastname'], data['password'], data['staffID'], data['email'], data['teachingExperience'])
-    if staff:
-      return jsonify({"message": f"Staff created with ID {staff.ID}"}, staff.to_json()), 201
-    else:
-      return jsonify({"error": "Error creating staff"}), 400
-
-
 # Route to get a student by ID
 @user_views.route("/students/<string:id>", methods=["GET"])
 def get_student_action(id):
