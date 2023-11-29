@@ -1,9 +1,8 @@
 from App.database import db
-from .user import User
 from .karma import Karma
 
 
-class Student():
+class Student(db.Model):
 	__tablename__ = 'student'
 	id = db.Column(db.String(10), primary_key=True)
 	firstname = db.Column(db.String(120), nullable=False)
@@ -12,7 +11,7 @@ class Student():
 	studentType = db.Column(db.String(30))  #full-time, part-time or evening
 	yearOfStudy = db.Column(db.Integer, nullable=False)
 	reviews = db.relationship('Review', backref='student', lazy='joined')
-	karmaID = db.Column(db.Integer, db.ForeignKey('karma.karmaID'))
+	karmaID = db.Column(db.Integer, db.ForeignKey('karma.karmaID', use_alter=True))
 
 	def __init__(self, id, firstname, lastname, contact, studentType, yearofStudy):
 		self.id = id
@@ -29,11 +28,13 @@ class Student():
 	def updateKarma(self):
 		karma = Karma.query.get(self.karmaID)
 		if karma.calculateScore(self):
-			return True
+			if updateRank():
+				return True
+			return False
 		return False
 		
 	def to_json(self):
-		karma = self.getKarma()
+		karma = Karma.query.get(self.karmaID)
 		return {
 			"id": self.id,
 			"firstname": self.firstname,
@@ -42,5 +43,6 @@ class Student():
 			"studentType": self.studentType,
 			"yearOfStudy": self.yearOfStudy,
 			"reviews": [review.to_json() for review in self.reviews],
-			"karmaID" : self.karmaID
+			"karmaScore" : karma.score,
+			"karmaRank" : karma.rank
     	}

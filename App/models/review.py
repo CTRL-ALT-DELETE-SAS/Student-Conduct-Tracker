@@ -42,36 +42,10 @@ class Review(db.Model):
     self.downvotes = 0
     self.created = datetime.now()
 
-  # only the staff member who created review can edit review
-  def editReview(self, staff, isPositive, comment):
-    if self.reviewerID == staff.id:
-      self.isPositive = isPositive
-      self.comment = comment
-      try:
-        db.session.add(self)
-        db.session.commit()
-        return True
-      except:
-        db.session.rollback()
-        return False
-    return None
-    
-  # only the staff member who created review can delete review
-  def deleteReview(self, staff):
-    if self.reviewerID == staff.id:
-      try:
-        db.session.delete(review)
-        db.session.commit()
-        return True
-      except:
-        db.session.rollback()
-        return False
-    return None
-
   # adds 1 to the upvotes for the review when called
   def upvoteReview(self, staff): 
     if staff in self.staffUpvoters:
-      return True
+      return self.upvotes
 
     else:
       if staff not in self.staffUpvoters:  
@@ -86,7 +60,7 @@ class Review(db.Model):
         db.session.commit()
         student = Student.query.get(self.studentID)
         notify_student(student)
-        return True
+        return self.upvotes
       except:
         db.session.rollback()
         return False
@@ -96,7 +70,7 @@ class Review(db.Model):
   #adds 1 to the downvotes for the review when called
   def downvoteReview(self, staff): 
     if staff in self.staffDownvoters:
-      return True
+      return self.downvotes
     
     else:
       if staff not in self.staffDownvoters: 
@@ -111,7 +85,7 @@ class Review(db.Model):
         db.session.commit()
         student = Student.query.get(self.studentID)
         notify_student(student)
-        return True
+        return self.downvotes
       except:
         db.session.rollback()
         return False
