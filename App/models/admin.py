@@ -29,35 +29,20 @@ class Admin(User):
 		except:
 			return False
 	
-	def updateStudent(self, studentID, field_to_update, new_value):
-		allowed_fields = ["id", "firstname", "lastname", "contact", "studenttype", "yearofstudy"]
-		input_field = field_to_update.lower().replace('-', '').replace('_', '').replace(' ', '')
-
-		student = Student.query.filter_by(id=studentID).first()
-
-		if student is None:
-			return "Student not found"
-
-		found_field = None
-		for field in Student.__table__.columns.keys():
-			if field.lower() == input_field:
-				found_field = field
-				break
-
-		if found_field is None:
-			return f"Field '{field_to_update}' does not exist for Student"
-
-		# Check if the specified field is in the list of editable fields
-		if input_field not in allowed_fields:
-			return f"Field '{field_to_update}' cannot be updated for Student"
-
-		# Update the specified field with the new value
-		setattr(student, found_field, new_value)
-
-		# Commit to save the changes
-		db.session.add(student)
-		db.session.commit()
-		return True
+	def updateStudent(self, student, firstname, lastname, contact, studentType, yearofStudy):
+		student.firstname = firstname
+		student.lastname = lastname
+		student.contact = contact
+		student.studentType = studentType
+		student.yearOfStudy = yearofStudy
+		try:
+			db.session.add(student)
+			db.session.commit()
+			return True
+		except:
+			db.session.rollback()
+			return False
+		return False
 	
 	def to_json(self):
 		return {
