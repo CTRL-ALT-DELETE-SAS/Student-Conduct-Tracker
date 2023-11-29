@@ -1,13 +1,12 @@
-COMP3613 ASSIGNMENT 1 & 2
+COMP3613 PROJECT
 
-Group: CTRL-ALT-DELETE
+Group: Error404
 
-Document: https://docs.google.com/document/d/1nBgYIHf5PcRCvPKZNv9UnSjubzX9cqX5FxpNLGNllAE/edit?usp=sharing 
+Document: 
 
-Postman Documentation: https://documenter.getpostman.com/view/30409872/2s9YJjSzQF  
+Postman Documentation: 
 
-Deloyed link: https://student-conduct-tracker-api.onrender.com
-
+Deloyed link: 
 
 ---
 # Dependencies
