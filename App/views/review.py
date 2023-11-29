@@ -1,16 +1,15 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, abort, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import current_user
-from App.controllers import Review, Staff
+from App.controllers.staff import search_students_searchTerm
 from App.controllers.user import get_staff
-from App.controllers.student import search_student
 
 from App.controllers.review import (
     get_reviews_by_staff,
     edit_review,
     delete_review,
-    upvoteReview,
-    downvoteReview,
+    upvote,
+    downvote,
     get_reviews,
     get_reviews_for_student, 
     get_review
@@ -46,7 +45,7 @@ def upvote (review_id):
         staff = get_staff(jwt_current_user.ID)
         if staff:
             current = review.upvotes
-            new_votes= upvoteReview(review_id, staff)
+            new_votes= upvote(review_id, staff)
             if new_votes == current: 
                return jsonify(review.to_json(), 'Review Already Upvoted'), 201 
             else:
@@ -68,7 +67,7 @@ def downvote (review_id):
         staff = get_staff(jwt_current_user.ID)
         if staff:
             current = review.downvotes
-            new_votes= downvoteReview(review_id, staff)
+            new_votes= downvote(review_id, staff)
             if new_votes == current: 
                return jsonify(review.to_json(), 'Review Already Downvoted'), 201 
             else:
@@ -81,7 +80,7 @@ def downvote (review_id):
 # Route to get reviews by student ID
 @review_views.route("/students/<string:student_id>/reviews", methods=["GET"])
 def get_reviews_of_student(student_id):
-    if search_student(student_id):
+    if search_students_searchTerm(student_id):
         reviews = get_reviews_for_student(student_id)
         if reviews:
             return jsonify([review.to_json() for review in reviews]), 200
