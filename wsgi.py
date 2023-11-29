@@ -6,7 +6,7 @@ import random
 import randomname
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_admin, create_staff, create_student, get_all_users_json, get_all_users )
+from App.controllers import *
 from App.views import (generate_random_contact_number)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -19,20 +19,15 @@ migrate = get_migrate(app)
 def initialize():
     db.drop_all()
     db.create_all()
-    admin=create_admin('bob', 'boblast' , 'bobpass')
+    admin=create_admin('Bob', 'Boblast' , 'bobpass')
     
-    for id in range(2, 50): 
-        staff= create_staff(admin, str(id), randomname.get_name(), randomname.get_name(), randomname.get_name(), randomname.get_name() + '@schooling.com')
-        db.session.add(staff)
-        db.session.commit()
+    staff = create_staff(admin, '0012', 'John', 'Mann', 'johnpass', 'johnmann@schooling.com')
+    staff = create_staff(admin, '0013', 'Jane', 'Anne', 'janepass', 'janeanne@schooling.com')
 
-    for id in range(50, 150): 
-    contact= generate_random_contact_number()
-    student= create_student(admin, str(id), randomname.get_name(), randomname.get_name(), contact, random.choice(['Full-Time','Part-Time', 'Evening']), str(random.randint(1, 8)))
-    db.session.add(student)
-    db.session.commit()
-
-    return jsonify({'message': 'Database initialized'}),201
+    student = create_student(admin, '0021', 'Nick', 'Dell', generate_random_contact_number(), random.choice(['Full-Time','Part-Time', 'Evening']), str(random.randint(1, 8)))
+    student = create_student(admin, '0022', 'John', 'Biz', generate_random_contact_number(), random.choice(['Full-Time','Part-Time', 'Evening']), str(random.randint(1, 8)))
+    
+    print('database initialized')
 
 '''
 User Commands
@@ -65,13 +60,13 @@ def create_staff_command(id, firstname, lastname, password, email):
 
 # this command will be : flask user create bob bobpass
 
-@user_cli.command("list", help="Lists users in the database")
+@user_cli.command("list_staff", help="Lists staff in the database")
 @click.argument("format", default="string")
 def list_user_command(format):
     if format == 'string':
-        print(get_all_users())
+        print(get_all_staff())
     else:
-        print(get_all_users_json())
+        print(get_all_staff_json())
 
 app.cli.add_command(user_cli) # add the group to the cli
 
