@@ -58,7 +58,14 @@ def create_staff_command(id, firstname, lastname, password, email):
     create_staff(id, firstname, lastname, password, email)
     print(f'{firstname} created!')
 
-# this command will be : flask user create bob bobpass
+
+@user_cli.command("list_admin", help="Lists admins in the database")
+@click.argument("format", default="string")
+def list_user_command(format):
+    if format == 'string':
+        print(get_all_admin())
+    else:
+        print(get_all_admin_json())
 
 @user_cli.command("list_staff", help="Lists staff in the database")
 @click.argument("format", default="string")
@@ -67,6 +74,14 @@ def list_user_command(format):
         print(get_all_staff())
     else:
         print(get_all_staff_json())
+
+@user_cli.command("list_students", help="Lists students in the database")
+@click.argument("format", default="string")
+def list_user_command(format):
+    if format == 'string':
+        print(get_all_students())
+    else:
+        print(get_all_students_json())
 
 app.cli.add_command(user_cli) # add the group to the cli
 

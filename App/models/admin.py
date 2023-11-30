@@ -1,5 +1,6 @@
 from App.database import db
 from .student import Student
+from .karma import Karma
 from .staff import Staff
 from .user import User
 
@@ -11,12 +12,25 @@ class Admin(User):
 		self.id = "A" + str(Admin.query.count() + 1)
 
 	def addStudent(self, id, firstname, lastname, contact, studentType, yearofStudy):
+		newKarma = Karma()
+		try:
+			db.session.add(newKarma)
+			db.session.commit()
+		except:
+			db.session.rollback()
+			return False
+
+
 		newStudent= Student(id, firstname, lastname, contact, studentType, yearofStudy)
+		
+		newStudent.karmaID = newKarma.karmaID
+		newKarma.studentID = newStudent.id
 		try:
 			db.session.add(newStudent)
 			db.session.commit()
 			return newStudent
 		except:
+			db.session.rollback()
 			return False
 
 

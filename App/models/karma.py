@@ -1,7 +1,6 @@
 from App.database import db
 from App.models import *
 
-
 class Karma(db.Model):
   __tablename__ = "karma"
   karmaID = db.Column(db.Integer, primary_key=True)
@@ -38,6 +37,7 @@ class Karma(db.Model):
 
   @classmethod
   def updateRank(cls):
+    from .student import Student
     # Calculate the rank of students based on their karma score
     # Query all students with karma scores in descending order
     
