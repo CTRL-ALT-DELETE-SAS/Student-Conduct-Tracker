@@ -6,7 +6,7 @@ class Student(db.Model):
 	__tablename__ = 'student'
 	id = db.Column(db.String(10), primary_key=True)
 	firstname = db.Column(db.String(120), nullable=False)
-  	lastname = db.Column(db.String(120), nullable=False)
+	lastname = db.Column(db.String(120), nullable=False)
 	contact = db.Column(db.String(30), nullable=False)
 	studentType = db.Column(db.String(30))  #full-time, part-time or evening
 	yearOfStudy = db.Column(db.Integer, nullable=False)
@@ -21,17 +21,16 @@ class Student(db.Model):
 		self.studentType = studentType
 		self.yearOfStudy = yearofStudy
 		self.reviews = []
-		newKarma = Karma()
-		self.karmaID = newKarma.karmaID
-		newKarma.studentID = id
 
 	def updateKarma(self):
 		karma = Karma.query.get(self.karmaID)
-		if karma.calculateScore(self):
-			if updateRank():
+		score = karma.calculateScore(self)
+		if score:
+			if Karma.updateRank():
 				return True
 			return False
 		return False
+		
 		
 	def to_json(self):
 		karma = Karma.query.get(self.karmaID)
@@ -42,7 +41,6 @@ class Student(db.Model):
 			"contact": self.contact,
 			"studentType": self.studentType,
 			"yearOfStudy": self.yearOfStudy,
-			"reviews": [review.to_json() for review in self.reviews],
 			"karmaScore" : karma.score,
 			"karmaRank" : karma.rank
     	}

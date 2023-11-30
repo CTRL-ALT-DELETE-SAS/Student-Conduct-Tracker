@@ -136,123 +136,138 @@ def identify_user_action():
 
 # Route to get all users
 @admin_views.route('/api/staff', methods=['GET'])
-@admin_required
+@jwt_required()
 def get_all_staff_api():
+  admin = get_admin(jwt_current_user.id)
+  if admin:
     staff = get_all_staff_json()
     return jsonify(staff)
+  return jsonify(error='cannot perform that action'), 403
 
-# Route to get all students
+# Route to get all students, both admin and staff can access this route
 @admin_views.route("/api/students", methods=["GET"])
-@admin_required
+@jwt_required()
 def get_all_students_api():
+  admin = get_admin(jwt_current_user.id)
+  staff = get_staff(jwt_current_user.id)
+  if admin or staff:
     students = get_all_students_json()
     return jsonify(students)
+  return jsonify(error='cannot perform that action'), 403
 
 
-# Route to get a student by ID
+# Route to get a student by ID, both admin and staff can access this route
 @admin_views.route("/api/students/<string:student_id>", methods=["GET"])
+@jwt_required()
 def get_student_api(student_id):
-    student = get_student(str(student_id))
-    if student:
-        return jsonify(student.to_json()), 200
-    else:
-        return "Student not found", 404
+  student = get_student(str(student_id))
+  if student:
+    return jsonify(student.to_json()), 200
+  else:
+    return jsonify(error="student not found"), 404
 
 
-# Route to get a staff by ID
+# Route to get a staff by ID, both admin and staff can access this route
 @admin_views.route("/api/staff/<string:staff_id>", methods=["GET"])
+@jwt_required()
 def get_staff_api(staff_id):
+  admin = get_admin(jwt_current_user.id)
+  if admin:
     staff = get_staff(str(staff_id))
     if staff:
         return jsonify(staff.to_json()), 200
     else:
-        return "Staff not found", 404
+        return jsonify(error="staff not found"), 404
+  return jsonify(error='cannot perform that action'), 403
 
 
 # Route to create a new staff member
 @admin_views.route("/api/staff", methods=["POST"])
 @jwt_required()
 def create_staff_api():
-  data = request.json
+  admin = get_admin(jwt_current_user.id)
+  if admin:
+
+    data = request.json
+
+    if not data['id'] or not data['firstname'] or not data['lastname'] or not data['password'] or not data['email']:
+      return jsonify(error="invalid request data"), 400
+
+    if get_staff(data['id']):
+      return jsonify({"error": f"a staff already uses the ID {data['id']}"}), 400  
   
-  #validate data
-  if not data['id'] or not data['firstname'] or not data['lastname'] or not data['password'] or not data['email']:
-    return jsonify({"error": "Invalid request data"}), 400
-  
-  if get_staff(data['id']):
-    return jsonify({"error": f"A user already uses the ID {data['staffID']}"}), 400
-  
-  if jwt_current_user and isinstance(jwt_current_user, Admin):
-    
     staff = create_staff(jwt_current_user, data['id'], data['firstname'], data['lastname'], data['password'], data['email'])
     if staff:
-      return jsonify({"message": f"Staff created with ID {staff.id}"}, staff.to_json()), 201
+      return jsonify({"message": f"staff created with ID {data['id']}"}, staff.to_json()), 201
     else:
-      return jsonify({"error": "Error creating staff"}), 400
-  else:
-    return jsonify({"error" : "Unauthorized: You must be an admin to create staff"}), 401
+      return jsonify(error="error creating staff"), 400
 
+  else:
+    return jsonify(error="cannot perform that action"), 403
+  
 
 # Route to create a new student
 @admin_views.route("/api/students", methods=["POST"])
 @jwt_required()
 def create_student_api():
+  admin = get_admin(jwt_current_user.id)
+  if admin:
+
     data = request.json
 
     if not data['id'] or not data['firstname'] or not data['lastname'] or not data['contact'] or not data['studentType'] or not data['yearOfStudy']:
-      return jsonify({"error": "Invalid request data"}), 400
+      return jsonify(error="invalid request data"), 400
 
-      #check if id exists in the database
     if get_student(data['id']):
-      return jsonify({"error": f"A student already uses the id {data['studentID']}"}), 500
+      return jsonify({"error": f"a student already uses the ID {data['id']}"}), 400
 
-  #validate student type
     student_type = data['studentType'].strip().title()
     if student_type not in ('Full-Time', 'Part-Time', 'Evening'):
-      return jsonify({"message": f"invalid student type ({data['studentType']}). Types: Full-Time, Part-Time and Evening"}), 400 
+      return jsonify({"message": f"invalid student type ({data['studentType']}). Types: Full-Time, Part-Time and Evening"}), 400   
+    student = create_student(jwt_current_user, data['id'], data['firstname'], data['lastname'], data['contact'], data['studentType'], data['yearOfStudy'])
 
-  #validate admin user
-    if jwt_current_user and isinstance(jwt_current_user, Admin):
-      student = create_student(jwt_current_user, data['id'], data['firstname'], data['lastname'], data['contact'], data['student_type'], data['yearOfStudy'])
-
-      if student:
-        return jsonify({"message": f"Student created with ID {student.id}"}, student.to_json()), 201
-      else: 
-        return jsonify({"error": "Error creating student"}), 400
+    if student:
+      return jsonify({"message": f"student created with ID {data['id']}"}, student.to_json()), 201
     else:
-      return jsonify({"error" : "Unauthorized: You must be an admin to create students"}), 401
+      return jsonify(error="error creating student"), 400
+
+  else:
+    return jsonify(error="cannot perform that action"), 403
+    
 
 
 # Route to update a student's information
-@admin_views.route("/students/<string:student_id>", methods=["PUT"])
+@admin_views.route("/api/students/<string:student_id>", methods=["PUT"])
 @jwt_required()
-def update_student_api(id):
-    if not jwt_current_user or not isinstance(jwt_current_user, Admin):
-      return jsonify({"error" : "Unauthorized: You must be an admin to update students"}), 401
+def update_student_api(student_id):
+  admin = get_admin(jwt_current_user.id)
+  if admin:
 
-    student = get_student(str(id))
+    student = get_student(str(student_id))
     if not student:
-      return jsonify({"error": "Student not found"}), 404
+      return jsonify(error="student not found"), 404
 
     #if a field was not entered set it to the current value for student so it remains unchanged so no need to enter every field on the request body/form
     data = request.json
     firstname = data.get("firstname", student.firstname)
     lastname = data.get("lastname", student.lastname)
-    password = data.get("password", None)
     contact = data.get("contact", student.contact)
-    student_type = data.get("studentType", student.studentType)
+    studentType = data.get("studentType", student.studentType)
     yearOfStudy = data.get("yearOfStudy", student.yearOfStudy)
 
     #Make student type case insensitive by converting to title format (1st letter in each word is uppercase)
-    student_type = student_type.strip().title()
-    if student_type not in ('Full-Time', 'Part-Time', 'Evening'):
+    studentType = studentType.strip().title()
+    if studentType not in ('Full-Time', 'Part-Time', 'Evening'):
         return jsonify({"message": f"invalid student type ({data['studentType']}). Types: Full-Time, Part-Time and Evening"}), 400 
   
-    updated= update_student(student, firstname, lastname, password, contact, student_type, yearOfStudy)
+    updated = update_student(jwt_current_user, student, firstname, lastname, contact, studentType, yearOfStudy)
     if updated:
       return jsonify(student.to_json(), "Student information updated successfully"), 200
     else:
-      return jsonify({"error": "Error updating student"}), 400 
+      return jsonify(error="error updating student"), 400
+
+  else:
+    return jsonify(error="cannot perform that action"), 403
 
 
 @admin_views.route('/api/identify', methods=['GET'])

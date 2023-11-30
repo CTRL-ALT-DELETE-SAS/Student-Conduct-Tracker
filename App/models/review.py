@@ -52,14 +52,17 @@ class Review(db.Model):
         self.upvotes += 1
         self.staffUpvoters.append(staff)
 
-        if staff in self.staffDownvoters:
-          self.downvotes -= 1
-          self.staffDownvoters.remove(staff)
+      if staff in self.staffDownvoters:
+        self.downvotes -= 1
+        self.staffDownvoters.remove(staff)
+
+      student = Student.query.get(self.studentID)
+      self.notify_student(student)
+
       try:
         db.session.add(self)
         db.session.commit()
-        student = Student.query.get(self.studentID)
-        notify_student(student)
+
         return self.upvotes
       except:
         db.session.rollback()
@@ -77,14 +80,17 @@ class Review(db.Model):
         self.downvotes += 1
         self.staffDownvoters.append(staff)
 
-        if staff in self.staffUpvoters: 
-          self.upvotes -= 1
-          self.staffUpvoters.remove(staff)
+      if staff in self.staffUpvoters: 
+        self.upvotes -= 1
+        self.staffUpvoters.remove(staff)
+        
+      student = Student.query.get(self.studentID)
+      self.notify_student(student)
+
       try:
         db.session.add(self)
         db.session.commit()
-        student = Student.query.get(self.studentID)
-        notify_student(student)
+
         return self.downvotes
       except:
         db.session.rollback()

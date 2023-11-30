@@ -25,17 +25,15 @@ class Staff(User):
     except:
       return False
 
-  def searchStudent(self, searchTerm):
-    students = db.session.query(Student).filter(
-      (Student.id == searchTerm) | (Student.firstname.ilike(f"%{searchTerm}%")) | (Student.lastname.ilike(f"%{searchTerm}%"))
-    ).all()
+  def searchStudent(self, search_query):
+    students = db.session.query(Student).filter((Student.id == search_query) | (Student.firstname.ilike(f"%{search_query}%")) | (Student.lastname.ilike(f"%{search_query}%"))).all()
     # studentID must be exact match (string)
     # Search by firstname or lastname - case-insensitive
     
     if students:
       return [student.to_json() for student in students]
-    else:
-      return []
+    
+    return []
   
   #return staff details on json format
   def to_json(self):

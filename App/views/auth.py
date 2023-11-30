@@ -39,8 +39,8 @@ def staff_login_api():
 	data = request.json
 	token = jwt_authenticate_staff(data['id'], data['password'])
 	if not token:
-		return jsonify(message='bad username or password given'), 401
-	return jsonify(access_token=token)
+		return jsonify(error='invalid staff credentials'), 401
+	return jsonify(access_token=token), 200
 
 
 @auth_views.route('/api/admin/login', methods=['POST'])
@@ -48,8 +48,8 @@ def admin_login_api():
   data = request.json
   token = jwt_authenticate_admin(data['id'], data['password'])
   if not token:
-    return jsonify(message='bad username or password given'), 401
-  return jsonify(access_token=token)
+    return jsonify(error='invalid admin credentials'), 401
+  return jsonify(access_token=token), 200
 
 
 @auth_views.route('/api/identify', methods=['GET'])

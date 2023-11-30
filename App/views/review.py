@@ -22,52 +22,44 @@ def view_review_api(review_id):
     if review:
         return jsonify(review.to_json())
     else: 
-        return 'Review does not exist', 404
+        return jsonify(error='review not found'), 404
 
 
 #Route to upvote review 
-@review_views.route('/api/reviews/<int:review_id>/upvotes', methods=['POST'])
+@review_views.route('/api/reviews/<int:review_id>/upvotes', methods=['PUT'])
 @jwt_required()
 def upvote_review_api(review_id):
-    if not jwt_current_user or not isinstance(jwt_current_user, Staff):
-      return "You are not authorized to upvote this review", 401
-      
-    review = get_review(review_id) 
-    if review:
-        staff = get_staff(jwt_current_user.id)
-        if staff:
+    staff = get_staff(jwt_current_user.id)
+    if staff:
+        review = get_review(review_id) 
+        if review:
             current = review.upvotes
             new_votes= upvoteReview(review, staff)
             if new_votes == current: 
-               return jsonify(review.to_json(), 'Review Already Upvoted'), 201 
+                return jsonify(review.to_json(), 'review already upvoted'), 200
             else:
-                return jsonify(review.to_json(), 'Review Upvoted'), 200
+                return jsonify(review.to_json(), 'review upvoted'), 200    
         else: 
-            return jsonify('Staff does not exist'), 404     
-    else: 
-        return'Review does not exist', 404
+            return jsonify(error='review not found'), 404
+    return jsonify(error="cannot perform action"), 403
 
 #Route to downvote review 
-@review_views.route('/api/reviews/<int:review_id>/downvotes', methods=['POST'])
+@review_views.route('/api/reviews/<int:review_id>/downvotes', methods=['PUT'])
 @jwt_required()
 def downvote_review_api(review_id):
-    if not jwt_current_user or not isinstance(jwt_current_user, Staff):
-      return "You are not authorized to downvote this review", 401
-  
-    review= get_review(review_id) 
-    if review:
-        staff = get_staff(jwt_current_user.id)
-        if staff:
+    staff = get_staff(jwt_current_user.id)
+    if staff:
+        review= get_review(review_id) 
+        if review:
             current = review.downvotes
             new_votes= downvoteReview(review, staff)
             if new_votes == current: 
-               return jsonify(review.to_json(), 'Review Already Downvoted'), 201 
+               return jsonify(review.to_json(), 'review already downvoted'), 200 
             else:
-                return jsonify(review.to_json(), 'Review Downvoted Successfully'), 200 
+                return jsonify(review.to_json(), 'review downvoted'), 200 
         else: 
-            return jsonify(get_review(review_id).to_json(), 'Staff does not exist'), 404
-    else: 
-        return'Review does not exist', 404
+            return jsonify(error='review not found'), 404
+    return jsonify(error="cannot perform action"), 403
 
 
 # Route to get reviews by student ID

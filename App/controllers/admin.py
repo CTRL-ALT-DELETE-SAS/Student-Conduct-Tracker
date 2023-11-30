@@ -49,6 +49,17 @@ def get_all_users():
     return db.session.query(Admin).all() +  db.session.query(Staff).all()
 
 
+def get_all_admin_json():
+    admins = get_all_admin()
+    if not admins:
+        return []
+    admins = [admin.to_json() for admin in admins]
+    return admins
+
+def get_all_admin():
+    return db.session.query(Admin).all()
+
+
 def get_all_staff_json():
     staff_members = get_all_staff()
     if not staff_members:

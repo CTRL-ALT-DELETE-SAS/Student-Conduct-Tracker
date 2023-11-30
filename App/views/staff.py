@@ -13,36 +13,49 @@ staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 @staff_views.route('/api/reviews', methods=['POST'])
 @jwt_required()
 def create_review_api():
-    if not jwt_current_user or not isinstance(jwt_current_user, Staff):
-      return 'Unauthorized', 401
-    data = request.json
+    staff = get_staff(jwt_current_user.id)
+    if staff:
+        
+      data = request.json
 
-    if not data['studentID']:
-        return jsonify({"error": 'Student does not exist'}), 404
-    
-    if not data['comment']:
-        return "Invalid request data", 400
-    
-    if data['isPositive'] not in (True, False):
-        return jsonify({"message": f"invalid Positivity ({data['isPositive']}). Positive: true or false"}), 400
+      if not data['studentID'] or not data['comment'] or data['isPositive'] not in (True, False):
+        return jsonify(error="invalid request data"), 400
+      
+      student = get_student(data['studentID'])
+      if not student:
+        return jsonify({"error": f"student with ID {data['studentID']} does not exist"}), 400
+      '''
+      if not data['comment']:
+          return "Invalid request data", 400
+      if data['isPositive'] not in (True, False):
+          return jsonify({"message": f"invalid Positivity ({data['isPositive']}). Positive: true or false"}), 400
+      '''
+      
+      review = create_review(jwt_current_user.id, data['studentID'], data['isPositive'], data['comment'])
+      
+      if review:
+          return jsonify(review.to_json()), 201
+      return 'Failed to create review', 400
 
-    if not get_staff(str(jwt_current_user.id)):
-        return 'Staff does not exist', 404 
-
-    review = create_review(jwt_current_user.id, data['studentID'], data['isPositive'], data['comment'])
-    
-    if review:
-        return jsonify(review.to_json()), 201
-    return 'Failed to create review', 400
-
-@staff_views.route('/api/students/<string:search_term>', methods=['GET'])
-@jwt_required()
-def search_students(search_term):
-  if jwt_current_user and isinstance(jwt_current_user, Staff): 
-    students = search_students_searchTerm(jwt_current_user, search_term)
-    if students:
-      return jsonify([student for student in students]), 200
     else:
-      return jsonify({"message": f"No students found with search term {search_term}"}), 204
+      return jsonify(error="cannot perform action"), 403
+
+# in following API convention, the word 'search' in the route represents the noun version and not the verb version
+@staff_views.route('/api/students/search', methods=['GET'])
+@jwt_required()
+def search_students_api():
+  results = []
+  staff = get_staff(jwt_current_user.id)
+  if staff:
+    search_query = request.args.get('query') # query params
+    
+    students = searchStudents(staff, search_query)
+    if students:
+      return jsonify(students), 200
+      #return jsonify([student for student in students]), 200
+    else:
+      return jsonify({"message": f"No students found with search query {search_query}"}), 200
+      
+    
   else:
-    return jsonify({"message": "You are not authorized to perform this action"}), 401
+    return jsonify(error="cannot perform action"), 403
