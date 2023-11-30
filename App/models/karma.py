@@ -5,9 +5,10 @@ from .student import Student
 class Karma(db.Model):
   __tablename__ = "karma"
   karmaID = db.Column(db.Integer, primary_key=True)
+  studentID = db.Column(db.String(10), db.ForeignKey('student.ID'))
   score = db.Column(db.Float, nullable=False, default=0.0)
   rank = db.Column(db.Integer, nullable=False, default=-99)
-
+  
   def __init__(self, score=0.0, rank=-99):
     self.score = score
     self.rank = rank
