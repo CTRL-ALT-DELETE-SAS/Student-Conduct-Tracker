@@ -24,7 +24,7 @@ def delete_review(review, staff):
 
 def downvote(reviewID, staff):
     review = get_review(reviewID)
-    return review.downvote(staff)
+    return review.downvoteReview(staff)
 
 
 def upvote(reviewID, staff):
