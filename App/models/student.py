@@ -2,18 +2,28 @@ from App.database import db
 from .user import User
 
 
-class Student(User):
+class Student(db.Model):
 	__tablename__ = 'student'
+
+	firstname = db.Column(db.String(120), nullable=False)
+	lastname = db.Column(db.String(120), nullable=False)
+  	# password = db.Column(db.String(120), nullable=False)
+
 	ID = db.Column(db.String(10), primary_key=True)
 	contact = db.Column(db.String(30), nullable=False)
 	studentType = db.Column(db.String(30))  #full-time, part-time or evening
 	yearOfStudy = db.Column(db.Integer, nullable=False)
+	
 	reviews = db.relationship('Review', backref='student', lazy='joined')
 	karmaID = db.Column(db.Integer, db.ForeignKey('karma.karmaID'))
 
   #When student is newly created there would be no reviews or karma yet
-	def __init__(self, studentID, firstname, lastname, password, contact, studentType, yearofStudy):
-		super().__init__(firstname, lastname, password)
+	def __init__(self, studentID, firstname, lastname, contact, studentType, yearofStudy):
+
+		# super().__init__(firstname, lastname, password)
+		self.firstname = firstname
+		self.lastname = lastname
+
 		self.ID = studentID
 		self.contact = contact
 		self.studentType = studentType

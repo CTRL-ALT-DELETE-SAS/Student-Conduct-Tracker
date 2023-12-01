@@ -6,13 +6,32 @@ import random
 import randomname
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_user, create_staff, create_student, get_all_users_json, get_all_users )
+from App.controllers import ( 
+    create_user, 
+    create_staff, 
+    create_student, 
+    get_all_users_json, 
+    get_all_users,
+    get_all_students,
+    get_all_students_json )
 from App.views import (generate_random_contact_number)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
 app = create_app()
 migrate = get_migrate(app)
+
+
+# todo
+#   Make student NOT a User - fix all the code that utilizes this - DONE? Test more
+#   add in more command line tests - for reviews and upvoting
+
+# notification system ideas: 
+# 1 - when a review is upvoted or downvoted, send msg in VIEWs to user
+#   - this would work by getting the review (reviewid) and the creator (userid/staffid) of it, then checking if the
+#   - current user is that same creator and making a flash notification if yes? or some kind of notification
+#   - 
+
 
 # This command creates and initializes the database
 @app.cli.command("init", help="Creates and initializes the database")
@@ -37,7 +56,7 @@ def initialize():
       student= create_student(admin, str(ID),
           randomname.get_name(), 
           randomname.get_name(), 
-          randomname.get_name(),
+        #   randomname.get_name(),
           contact,
           random.choice(['Full-Time','Part-Time', 'Evening']),
           str(random.randint(1, 8))
@@ -76,6 +95,24 @@ def list_user_command(format):
         print(get_all_users_json())
 
 app.cli.add_command(user_cli) # add the group to the cli
+
+
+# student command
+student_cli = AppGroup('student', help="student object commands")
+
+# @student_cli("create", help="creates a student")
+
+@student_cli.command("list", help="Lists students in the database")
+@click.argument("format", default="string")
+def list_students_command(format):
+    if format == 'string':
+        print(get_all_students())
+    else:
+        print(get_all_students_json())
+
+# @student_cli.command("get", help="Get all information about a specific student")
+
+app.cli.add_command(student_cli)
 
 '''
 Test Commands
