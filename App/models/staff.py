@@ -47,6 +47,11 @@ class Staff(User):
     db.session.commit()
     return review
 
+  def searchReview(self, search_term):
+        staff_reviews = self.reviews_created
+        filtered_reviews = [review for review in staff_reviews if search_term.lower() in review.comment.lower()]
+        return filtered_reviews
+
   def searchStudent(self, searchTerm):
     # Query the Student model for a student by ID or first name, or last name
     students = db.session.query(Student).filter(
