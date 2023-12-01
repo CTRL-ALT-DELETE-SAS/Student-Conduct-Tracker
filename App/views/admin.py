@@ -38,10 +38,7 @@ def upload_file():
     
 @admin_views.route('/students', methods=['POST'])
 def add_students():
-  token = jwt_authenticate_admin(self.ID, self.password)
-  if not token:
-     return jsonify({"error": f"Not Authorized"}), 401
-  else
+  if jwt_current_user and isinstance(jwt_current_user, Admin):
     user= User.query.get(current_user.id)
     with open('') as file:
     for row in file:
@@ -53,9 +50,14 @@ def add_students():
         flash('error':f"{row['studentType']} was not a valis option"), 400
       else:
        add_student_information(admin=user,id=row['id'],firstname=row['firstname'],lastname=row['lastname'],studentType=row['studentType'],yearofEnrollmentrow=row['yearofEnrollment'])
-  flash('database Updated')
-  return jsonify({'message': f"Students created"}),200
+      flash('database Updated')
+      return jsonify({'message': f"Students created"}),200
+    else:
+    return jsonify({'message': f"Not Authorized"}), 401
 
 @admin_views.route('/students', methods=['PUT'])
 def update_students():
-  return jsonify({'message': f"Students updated"})
+    if jwt_current_user and isinstance(jwt_current_user, Admin):
+        return jsonify({'message': f"Students updated"})
+    else:
+    return jsonify({'message': f"Not Authorized"}), 401
