@@ -3,110 +3,73 @@ from flask_login import current_user, LoginManager, login_user
 from App.database import db
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager
 
-from App.models import Staff, Student, Admin, User
+from App.models import Staff, Admin, User
 
+jwt = JWTManager()
 
-def jwt_authenticate(id, password):
-  staff = Staff.query.filter_by(ID=id).first()
-  if staff and staff.check_password(password):
-    return create_access_token(identity=id)
+def jwt_authenticate(id, password, model):
+    user = model.query.filter_by(ID=id).first()
+    if user and user.check_password(password):
+        return create_access_token(identity=id)
+    return None
 
-  student = Student.query.filter_by(ID=id).first()
-  if student and student.check_password(password):
-    return create_access_token(identity=id)	
-
-  return None
+def jwt_authenticate_staff(id, password):
+    return jwt_authenticate(id, password, Staff)
 
 def jwt_authenticate_admin(id, password):
-  admin = Admin.query.filter_by(ID=id).first()
-  if admin and admin.check_password(password):
-    return create_access_token(identity=id)
+    return jwt_authenticate(id, password, Admin)
 
-  return None
-
+def get_user(id, model):
+    return model.query.filter_by(ID=id).first()
 
 def login(id, password):    
-
-    staff = Staff.query.filter_by(ID=id).first()
-    if staff and staff.check_password(password):
-        return staff
-
-    student = Student.query.filter_by(ID=id).first()
-    if student and student.check_password(password):
-        return student
-
-    admin = Admin.query.filter_by(ID=id).first()
-    if admin and admin.check_password(password):
-        return admin
+    for model in [Staff, Admin]:
+        user = get_user(id, model)
+        if user and user.check_password(password):
+            return user
     return None
-
 
 def setup_flask_login(app):
-  login_manager = LoginManager()
-  login_manager.init_app(app)
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
-  @login_manager.user_loader
-  def load_user(user_id):
-    staff = Staff.query.get(user_id)
-    if staff:
-      return staff
-
-    student = Student.query.get(user_id)
-    if student:
-      return student
-
-    admin = Admin.query.get(user_id)
-    if admin:
-      return admin
-    return login_manager
-
+    @login_manager.user_loader
+    def load_user(user_id):
+        for model in [Staff, Admin]:
+            user = get_user(user_id, model)
+            if user:
+                return user
+        return login_manager
 
 def setup_jwt(app):
-  jwt = JWTManager(app)
+    jwt = JWTManager(app)
 
-  @jwt.user_identity_loader
-  def user_identity_lookup(identity):
-    admin = Admin.query.filter_by(ID=identity).one_or_none()
-    if admin:
-      return admin.ID
+    @jwt.user_identity_loader
+    def user_identity_lookup(identity):
+        admin = Admin.query.filter_by(ID=identity).one_or_none()
+        if admin:
+            return admin.ID
 
-    staff = Staff.query.filter_by(ID=identity).one_or_none()
-    if staff:
-      return staff.ID
-
-    student= Student.query.filter_by(ID=identity).one_or_none() 
-    if student:
-      return student.ID
-
-    return None
+        staff = Staff.query.filter_by(ID=identity).one_or_none()
+        if staff:
+            return staff.ID
+        
+        return None
 
 
-  @jwt.user_lookup_loader
-  def user_lookup_callback(_jwt_header, jwt_data):
-      identity = jwt_data["sub"]
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
 
-      admin = Admin.query.filter_by(ID=identity).one_or_none()
-      if admin:
-          return admin
+        admin = Admin.query.filter_by(ID=identity).one_or_none()
+        if admin:
+            return admin
 
-      staff = Staff.query.filter_by(ID=identity).one_or_none()
-      if staff:
-          return staff
+        staff = Staff.query.filter_by(ID=identity).one_or_none()
+        if staff:
+            return staff
 
-      student = Student.query.filter_by(ID=identity).one_or_none()
-      if student:
-          return student
-  return jwt
-
-
-def student_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if not current_user.is_authenticated or not isinstance(current_user, Student):
-            return "Unauthorized", 401
-        return func(*args, **kwargs)
-    return wrapper
-
+        return jwt
 
 def staff_required(func):
     @wraps(func)
@@ -123,4 +86,4 @@ def admin_required(func):
         if not current_user.is_authenticated or not isinstance(current_user, Admin):
             return "Unauthorized", 401
         return func(*args, **kwargs)
-    return wrapper
+    return wrapper 
