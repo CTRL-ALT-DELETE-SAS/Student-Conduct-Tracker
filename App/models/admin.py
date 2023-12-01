@@ -14,8 +14,8 @@ class Admin(User):
 		return self.ID
 
 	#add student to the database
-	def addStudent(self, id, firstname, lastname, password, contact, studentType, yearofStudy):
-		newStudent= Student(id, firstname, lastname, password, contact, studentType, yearofStudy)
+	def addStudent(self, id, firstname, lastname, contact, studentType, yearofStudy):
+		newStudent= Student(id, firstname, lastname, contact, studentType, yearofStudy)
 		
 		db.session.add(newStudent)
 		db.session.commit()  # Commit to save the new student to the database
@@ -32,7 +32,7 @@ class Admin(User):
 	#takes a studentID, string for field_to_update and new_value . Updates the  relative field for the student
 	def updateStudent(self, studentID, field_to_update, new_value):
 		# List of fields that can be updated for a student record
-		allowed_fields = ["ID", "contact", "firstname", "lastname", "password", "studenttype", "yearofstudy"]
+		allowed_fields = ["ID", "contact", "firstname", "lastname", "studenttype", "yearofstudy"]
 
 		# Normalize the input field name by converting it to lowercase and replacing '-', '_', ' ' with ''
 		input_field = field_to_update.lower().replace('-', '').replace('_', '').replace(' ', '')

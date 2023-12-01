@@ -2,8 +2,8 @@ from App.models import Staff, Student, Admin
 from App.database import db
 
 
-def create_student(admin,studentID, firstname, lastname, password, contact, studentType, yearofStudy):
-		new_student = admin.addStudent(studentID, firstname=firstname, lastname=lastname, password=password, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
+def create_student(admin,studentID, firstname, lastname, contact, studentType, yearofStudy):
+		new_student = admin.addStudent(studentID, firstname=firstname, lastname=lastname, contact=contact, studentType=studentType, yearofStudy=yearofStudy)
 		if new_student:
 			return new_student
 		return None
@@ -67,7 +67,7 @@ def get_all_staff_json():
     return staff_members
 
 def get_all_users():
-    return db.session.query(Admin).all() +  db.session.query(Staff).all() + db.session.query(Student).all()
+    return db.session.query(Admin).all() +  db.session.query(Staff).all()
 
 def get_all_students():
     return db.session.query(Student).all()
