@@ -9,10 +9,10 @@ from App.controllers import *
 user_views = Blueprint("user_views", __name__, template_folder='../templates')
 
 # Route to get page of all users 
-@user_views.route('/users', methods=['GET'])
-def get_user_page():
-    users = get_all_users()
-    return render_template('users.html', users=users)
+@user_views.route('/searchStudent', methods=['GET'])
+def get_student_page():
+    students = get_all_students()
+    return render_template('searchStudent.html', students=students)
 
 # Route to get all users
 @user_views.route('/api/users', methods=['GET'])
@@ -80,7 +80,7 @@ def create_staff_action():
 
 
 # Route to get a student by ID
-@user_views.route("/student/<string:id>", methods=["GET"])
+@user_views.route("/searchStudent/<string:id>", methods=["GET"])
 def get_student_action(id):
     student = get_student(str(id))
     if student:
@@ -90,7 +90,7 @@ def get_student_action(id):
 
 
 # Route to get all students
-@user_views.route("/students", methods=["GET"])
+@user_views.route("/api/students", methods=["GET"])
 def get_all_students_action():
     students = get_all_students()
     if students:

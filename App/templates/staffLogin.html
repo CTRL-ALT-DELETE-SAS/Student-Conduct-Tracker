@@ -6,21 +6,22 @@
 
 {% block content %}
 <section>
+  <form method="POST" action="/login">
   <div class="form-box">
-    <div class="form-value">
-      <form action="">
+    <div class="form-value" >
+      <!--<form action="">-->
         
         <h2>Log in</h2>
 
         <div class="inputbox">
           <ion-icon name="mail-outline"></ion-icon>
-          <input type="email" required>
-          <label for="">Email</label>
-        </div>
+          <input name="email" type="email" required class="validate">
+          <label for="email">Email</label>
+        </div>        
 
         <div class="inputbox">
           <ion-icon name="lock-closed-outline"></ion-icon>
-          <input type="password" required>
+          <input type="password" required class="validate">
           <label for="">Password</label>
         </div>
 
