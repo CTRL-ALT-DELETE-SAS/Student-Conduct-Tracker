@@ -54,7 +54,7 @@ def add_students():
         file_content = fp.read()
   
         for row in file_content:
-          if row['studentType'] != "Full-Time" or row['studentType'] != "Part-Time" or row['studentType'] != "Evening" or or row['studentType'] != "Graduated" or row['studentType'] != "On-Leave"
+          if (row['studentType'] != "Full-Time" or row['studentType'] != "Part-Time" or row['studentType'] != "Evening" or or row['studentType'] != "Graduated" or row['studentType'] != "On-Leave"):
             return jsonify({'error':f"{row['studentType']} was not a valis option"}), 400
           else:
               student=add_student_information(admin=user,id=row['id'],firstname=row['firstname'],lastname=row['lastname'],studentType=row['studentType'],yearofEnrollmentrow=row['yearofEnrollment'])
