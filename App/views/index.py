@@ -48,3 +48,15 @@ def init():
       db.session.commit()
 
   return jsonify({'message': 'Database initialized'}),201
+
+@index_views.route('/staffLogin', methods = ['GET']) #1
+def staffLoginPage():
+    return render_template('staffLogin.html')
+
+@index_views.route('/staffHome', methods = ['GET']) #2
+def staffHomePage():
+    return render_template('staffHome.html')
+
+@index_views.route('/searchStudent', methods = ['GET']) #3
+def searchStudentPage():
+    return render_template('searchStudent.html')
