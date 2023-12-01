@@ -76,11 +76,10 @@ def get_all_staff():
     return db.session.query(Staff).all()
 
 
-def update_student(student, firstname, lastname, password, contact, studentType, yearofStudy):
+def update_student(student, firstname, lastname, contact, studentType, yearofStudy):
     student.firstname = firstname 
     student.lastname = lastname
-    if password is not None:
-      student.set_password(password)
+
     student.contact = contact
     student.studentType = studentType
     student.yearOfStudy = yearofStudy

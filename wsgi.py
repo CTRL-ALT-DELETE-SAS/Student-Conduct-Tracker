@@ -13,7 +13,9 @@ from App.controllers import (
     get_all_users_json, 
     get_all_users,
     get_all_students,
-    get_all_students_json )
+    get_all_students_json,
+    get_all_staff,
+    get_all_staff_json )
 from App.views import (generate_random_contact_number)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -96,8 +98,20 @@ def list_user_command(format):
 
 app.cli.add_command(user_cli) # add the group to the cli
 
+# staff commands
+staff_cli = AppGroup('staff', help='staff object commands')
 
-# student command
+@staff_cli.command("list", help='lists staff object in database')
+@click.argument("format", default="string")
+def list_staff_command(format):
+    if format == 'string':
+        print(get_all_staff())
+    else:
+        print(get_all_staff_json())
+
+app.cli.add_command(staff_cli)
+
+# student commands
 student_cli = AppGroup('student', help="student object commands")
 
 # @student_cli("create", help="creates a student")
