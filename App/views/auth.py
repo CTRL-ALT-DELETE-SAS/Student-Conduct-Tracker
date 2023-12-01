@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for, session
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import login_required, login_user, current_user, logout_user
+from App.models import staff
 from datetime import datetime, timedelta
 
 from.index import index_views
@@ -22,13 +23,14 @@ def identify_page():
 
 @auth_views.route('/login', methods=['POST'])
 def login_action():
-    data = request.json
-    user = login(data['ID'], data['password'])
-    if user:
-        session['logged_in'] = True
-        token = jwt_authenticate(data['ID'], data['password'])
-        return 'user logged in!'
-    return 'bad username or password given', 401
+    data = request.form
+    #email = data.get('email')
+    staffuser = login(data['email'], data['password'])
+    existing_staffuser = staff.query.filter((staff.email == data['email']) & (staff.password == data['password'] )).first()
+    if existing_staffuser:
+         return redirect('/staffHome')
+    return redirect('/')
+    #return 'bad username or password given', 401
 
 
 @auth_views.route('/logout', methods=['GET'])

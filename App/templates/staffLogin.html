@@ -1,47 +1,46 @@
 {% extends "layout.html" %}
 {% block title %}Student Conduct Tracker{% endblock %}
-{% block page %}Student Conduct Tracker{% endblock %}
+{% block page %}Staff{% endblock %}
 
 {{ super() }}
 
 {% block content %}
-<body>
-  <section>
-    <div class="form-box">
-      <div class="form-value">
-        <form action="">
-
-          <h2>Log in</h2>
-
-          <div class="inputbox">
-            <ion-icon name="mail-outline"></ion-icon>
-            <input type="email" required>
-            <label for="">Email</label>
-          </div>
-
-          <div class="inputbox">
-            <ion-icon name="lock-closed-outline"></ion-icon>
-            <input type="password" required>
-            <label for="">Password</label>
-          </div>
-
-          <div class="forget">
-            <label for=""><input type="checkbox">Remember Me <a href="#">Forget Password</a> </label>
-          </div>
-
-          <button>Log in</button>
-
-          <div class="register">
-            <p>Don't have an account? <a href="#">Register</a></p>
-          </div>
-          
-        </form>
+<section>
+  <form method="POST" action="/login">
+  <div class="form-box">
+    <div class="form-value" >
+      <!--<form action="">-->
         
-      </div>
-    </div>
-  </section>
+        <h2>Log in</h2>
 
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-</body>   
+        <div class="inputbox">
+          <ion-icon name="mail-outline"></ion-icon>
+          <input name="email" type="email" required class="validate">
+          <label for="email">Email</label>
+        </div>        
+
+        <div class="inputbox">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input type="password" required class="validate">
+          <label for="">Password</label>
+        </div>
+
+        <div class="forget">
+          <label for=""><input type="checkbox">Remember Me <a href="#">Forget Password</a> </label>
+        </div>
+
+        <button>Log in</button>
+
+        <div class="register">
+          <p>Don't have an account? <a href="#">Register</a></p>
+        </div>
+        
+      </form>
+      
+    </div>
+  </div>
+
+</section>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 {% endblock %}

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}Student Conduct Tracker{% endblock %}
+{% block page %}Staff Home Page{% endblock %}
+
+{{ super() }}
+
+{% block content %}
+<section>
+    <div class="staffHome-form-box">
+        
+        <div class="staffHome-form-value">
+            
+            <div style="display: flex; justify-content: center; height: 12vh; margin-top: 8vh;">
+                <form action="/searchStudent" method="get">
+                        <div class="card-action">
+                            <a href="/searchStudent"></a>
+                            <button class="blue text-white btn">Search Student</button>          
+                        </div>
+                </form>
+            </div>
+
+            <div style="display: flex; justify-content: center; height: 12vh; margin-top: vh;">
+                <form action="/logReview" method="get">
+                        <div class="card-action">
+                            <a href="/logReview"></a>
+                            <button class="blue text-white btn">Log Review</button>          
+                        </div>
+                </form>
+            </div>
+
+            <div style="display: flex; justify-content: center; height: 12vh; margin-top: vh;">
+                <form action="/karmaRanking" method="get">
+                        <div class="card-action">
+                            <a href="/karmaRanking"></a>
+                            <button class="blue text-white btn">View Karma Rankings</button>          
+                        </div>
+                </form>
+            </div>
+                    
+        </div>
+        
+    </div>
+    
+</section>
+{% endblock %}
