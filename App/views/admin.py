@@ -73,13 +73,13 @@ def update_students():
       return 'Unauthorized', 401
 
      # Check if the POST request has a file
-        if 'file' not in request.files:
-            return jsonify({'error': 'No file selected'}), 400
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file selected'}), 400
 
     file = request.files['file']
 
-        if file.filename == '':
-            return jsonify({'error': 'No file selected'}), 400
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
   
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
