@@ -94,13 +94,16 @@ def update_students():
         for row in file_content:
           if (row['field_to-update'] == "studentType"):
               if (row['new_value'] != "Full-Time" or row['new_value'] != "Part-Time" or row['new_value'] != "Evening" or row['new_value'] != "Graduated" or row['new_value'] != "On-Leave"):
-            return jsonify({'error':f"{row['new_value']} was not a valid option"}), 400
-          else:
-              student=update_student(admin=jwt_current_user,id=row['id'],field_to_update=row['field_to-update'],new_value=row['new_valluw'])
-              if student:
-                  return jsonify(student)
+                  return jsonify({'error':f"{row['new_value']} was not a valid option"}), 400
               else:
-                  return jsonify({'error': f"There is no student with ID {row['ID']} "}), 400
-    return jasonify({'message': f"database Updated"})
+                  student=update_student(admin=jwt_current_user,id=row['id'],field_to_update=row['field_to-update'],new_value=row['new_value'])
+          else: 
+              student=update_student(admin=jwt_current_user,id=row['id'],field_to_update=row['field_to-update'],new_value=row['new_value'])
+              
+        if student:
+            return jsonify(student)
+        else:
+            return jsonify({'error': f"There is no student with ID {row['ID']} "}), 400
+        return jasonify({'message': f"database Updated"})
     
-  return jsonify({'message': f"Students updated"})
+    return jsonify({'message': f"Students updated"})
