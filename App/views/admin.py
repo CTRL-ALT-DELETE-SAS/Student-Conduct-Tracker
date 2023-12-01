@@ -73,19 +73,19 @@ def update_students():
       return 'Unauthorized', 401
 
      # Check if the POST request has a file
-  if 'file' not in request.files:
-      return jsonify({'error': 'No file selected'}), 400
-  
-  file = request.files['file']
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file selected'}), 400
 
-  if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
+    file = request.files['file']
+
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
   
-  if file and allowed_file(file.filename):
-    filename = secure_filename(file.filename)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
     # Save the file to the upload folder
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(file_path)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
 
     # Read the content of the file
     with open(file_path, 'r') as fp:
