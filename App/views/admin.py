@@ -52,17 +52,17 @@ def add_students():
     # Read the content of the file
     with open(file_path, 'r') as fp:
         file_content = fp.read()
-  '''
-        for row in file:
-          id=row['id']
-          student=Student.query.get(id) 
-          if student:
-            flash('error':f"ID already exists {row['id']}"), 400
-          elif row['studentType'] != "Full-Time" or row['studentType'] != "Part-Time" or row['studentType'] != "Evening" or or row['studentType'] != "Graduated" or row['studentType'] != "On-Leave"
-            flash('error':f"{row['studentType']} was not a valis option"), 400
+  
+        for row in file_content:
+          if row['studentType'] != "Full-Time" or row['studentType'] != "Part-Time" or row['studentType'] != "Evening" or or row['studentType'] != "Graduated" or row['studentType'] != "On-Leave"
+            return jsonify({'error':f"{row['studentType']} was not a valis option"}), 400
           else:
-          add_student_information(admin=user,id=row['id'],firstname=row['firstname'],lastname=row['lastname'],studentType=row['studentType'],yearofEnrollmentrow=row['yearofEnrollment'])
-      flash('database Updated')'''
+              student=add_student_information(admin=user,id=row['id'],firstname=row['firstname'],lastname=row['lastname'],studentType=row['studentType'],yearofEnrollmentrow=row['yearofEnrollment'])
+              if student:
+                  return jsonify(student)
+              else:
+                  return jsonify({'error': f"ID already exists {row['ID']} "}), 400
+    return jasonify({'message': f"database Updated"})
   
   return jsonify({'message': file_content}), 200
 
