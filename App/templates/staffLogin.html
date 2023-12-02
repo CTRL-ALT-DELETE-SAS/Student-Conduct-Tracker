@@ -4,6 +4,12 @@
 
 {{ super() }}
 
+{% block link %}
+    <ul id = "nav-mobile" class = "right">
+        <li><a href = "/">Home Page</a></li>
+    </ul>
+{% endblock %}
+
 {% block content %}
 <section>
   <form method="POST" action="/login">
@@ -25,14 +31,14 @@
           <label for="password">Password</label>
         </div>
 
-        <div class="forget">
-          <label for=""><input type="checkbox">Remember Me <a href="#">Forget Password</a> </label>
+        <div class="access">
+          <label for="">Are you an admin?<a href="/adminLogin"> Log in here</a> </label>
         </div>
 
         <button>Log in</button>
 
         <div class="register">
-          <p>Don't have an account? <a href="#">Register</a></p>
+          <p>Don't have an account? <a href="/registerStaff">Register</a></p>
         </div>
         
       </form>

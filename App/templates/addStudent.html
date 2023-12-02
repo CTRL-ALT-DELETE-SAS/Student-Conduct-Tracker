@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block title %}Student Conduct Tracker{% endblock %}
+{% block page %}Admin{% endblock %}
+
+{{ super() }}
+
+{% block link %}
+    <ul id = "nav-mobile" class = "left">
+        <li><a href = "/adminHome">Back</a></li>
+    </ul>
+    <ul id = "nav-mobile" class = "right">
+        <li><a href = "/">Log Out</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+<section>
+    <div class="generic-form-box" id = "add-student">
+      <div class="form-value" >
+        <form action="">
+          
+          <h2>Add Student</h2>
+
+          <div class="row">
+            <label for="">Student ID</label>
+            <input type="text" required>
+          </div>
+  
+          <div class="row">
+            <label for="">First Name</label>
+            <input type="text" required>
+          </div>
+
+          <div class="row">
+            <label for="">Last Name</label>
+            <input type="text" required>
+          </div>
+
+          <div class="row">
+            <label for="">Contact</label>
+            <input type="text" required>
+          </div>
+  
+          <div class="row">
+            <label for="">Year of Study</label>
+            <input type="date" required>
+          </div>
+
+          <button class="blue text-white btn">Save</button>
+          
+        </form>
+        
+      </div>
+    </div>
+  
+  </section>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+{% endblock %}

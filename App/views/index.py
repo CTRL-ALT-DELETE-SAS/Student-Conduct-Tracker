@@ -49,14 +49,26 @@ def init():
 
   return jsonify({'message': 'Database initialized'}),201
 
-@index_views.route('/staffLogin', methods = ['GET']) #1
+@index_views.route('/staffLogin', methods = ['GET'])
 def staffLoginPage():
     return render_template('staffLogin.html')
 
-@index_views.route('/staffHome', methods = ['GET']) #2
+@index_views.route('/staffHome', methods = ['GET'])
 def staffHomePage():
     return render_template('staffHome.html')
 
-@index_views.route('/searchStudent', methods = ['GET']) #3
+@index_views.route('/searchStudent', methods = ['GET'])
 def searchStudentPage():
     return render_template('searchStudent.html')
+    
+@index_views.route('/studentInformation', methods = ['GET'])
+def studentInformationPage():
+    return render_template('studentInformation.html')
+
+@index_views.route('/registerAdmin', methods = ['GET'])
+def registerAdminPage():
+    return render_template('registerAdmin.html')
+
+@index_views.route('/registerStaff', methods = ['GET'])
+def registerStaffPage():
+    return render_template('registerStaff.html')

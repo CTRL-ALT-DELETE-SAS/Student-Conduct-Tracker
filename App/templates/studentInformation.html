@@ -1,9 +1,57 @@
 {% extends "layout.html" %}
 {% block title %}Student Conduct Tracker{% endblock %}
-{% block page %}Student Conduct Tracker{% endblock %}
+{% block page %}Student Information{% endblock %}
 
 {{ super() }}
 
 {% block content %}
+<section>
+    <div class="generic-form-box">
     
+        <div class = "student-info">
+            <div id = "student-information">
+                <h4>Student Name</h4>
+                <h5>Student ID</h5>
+            </div>
+    
+            <div id ="karma-info">
+                <h4>Karma</h4>
+                <h5>Score</h5>
+            </div>
+        </div>
+
+        <div class = "student-review">
+
+            <div id="review-info">
+                <table style="width: 800px">
+                    <thead>
+                        <th>Reviews</th>
+                        <th></th>
+                        <th></th>
+                    </thead>
+                    <tr>
+                        <td>Review information</td>
+                        <td style="width: 40px"><button>Agree</button></td>
+                        <td style="width: 40px"><button>Disagree</button></td>
+                    </tr>
+                    <tr>
+                        <td>Review information</td>
+                        <td style="width: 40px"><button>Agree</button></td>
+                        <td style="width: 40px"><button>Disagree</button></td>
+                    </tr>
+                    <tr>
+                        <td>Review information</td>
+                        <td style="width: 40px"><button>Agree</button></td>
+                        <td style="width: 40px"><button>Disagree</button></td>
+                    </tr>
+                    
+                </table>
+            </div>
+        </div>
+
+                    
+        
+    </div>
+    
+</section>
 {% endblock %}

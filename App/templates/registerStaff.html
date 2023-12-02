@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block title %}Student Conduct Tracker{% endblock %}
+{% block page %}Staff Registration{% endblock %}
+
+{{ super() }}
+
+{% block link %}
+    <ul id = "nav-mobile" class = "right">
+        <li><a href = "/">Home Page</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+<section>
+    <div class="register-form-box">
+      <div class="form-value">
+        <form action="">
+          
+          <h2>Register</h2>
+  
+            <div class="registration">
+
+                <div class="input-name">
+                    <div class="inputbox">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" required>
+                        <label for="">First Name</label>
+                    </div>
+            
+                    <div class="inputbox">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" required>
+                        <label for="">Last Name</label>
+                    </div>
+                </div>
+
+                <div class ="input-details">
+                    <div class="inputbox" id = "register-inputbox">
+                        <ion-icon name="time-outline"></ion-icon>
+                        <input type="text" required>
+                        <label for="">Teaching Experience</label>
+                    </div>
+        
+                    <div class="inputbox" id = "register-inputbox">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input type="email" required>
+                        <label for="">Email</label>
+                    </div>
+            
+                    <div class="inputbox" id = "register-inputbox">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input type="password" required>
+                        <label for="">Password</label>
+                    </div>
+                </div>
+            
+            </div>
+          <!--Code edit here-->
+          <div class="access">
+            <label for="">Would like to be admin?<a href="/registerAdmin"> Register here</a> </label>
+          </div>
+  
+          <button>Log in</button>
+  
+          <div class="register">
+            <p>Have an account? <a href="/staffLogin"> Log in here</a></p>
+          </div>
+
+         
+          
+        </form>
+        
+      </div>
+    </div>
+  
+</section>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+{% endblock %}
