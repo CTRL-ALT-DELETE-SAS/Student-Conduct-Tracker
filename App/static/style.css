@@ -74,7 +74,7 @@ input:valid ~ label{
     top: 20px;
 }
 
-.forget{
+.admin-access{
     margin: -15px 0 15px;
     font-size: .9em;
     color: green;
@@ -82,16 +82,16 @@ input:valid ~ label{
     justify-content: center;
 }
 
-.forget label input{
+.admin-access label input{
     margin-right: 3px;
 }
 
-.forget label a{
+.admin-access label a{
     color: green;
     text-decoration: none;
 }
 
-.forget label a:hover{
+.admin-access label a:hover{
     text-decoration: underline;
 }
 
@@ -125,14 +125,42 @@ button{
     text-decoration:underline;
 }
 
-.staffHome-form-box{
+.generic-form-box{
     position: relative;
     width: 930px;
-    height: 500px;
+    height: 100%;
     background: #fff;
     border: 3px solid green;
     border-radius: 20px;
     display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.student-info{
+    margin-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+}
+
+#student-information{
+    position: relative;
+}
+
+#karma-info{
+    position: relative;
+}
+
+.student-review{
+    position: relative;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#review-info{
+    position: relative;
+    flex-grow: 1;
 }
