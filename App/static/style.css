@@ -33,6 +33,12 @@ h2{
     text-align: center;
 }
 
+h3{
+    font-size: 2em;
+    color: green;
+    text-align: center;
+}
+
 .inputbox{
     position: relative;
     margin: 30px 0;
@@ -207,4 +213,23 @@ button{
 
 #staff-home{
     margin-top: 75px;
+}
+
+.row{
+    display: flex;
+    position: relative;
+    width: 450px;
+}
+
+#add-student{
+    width: 600px;
+    height: 550px;
+    justify-content: center;
+    align-items: center;
+}
+
+.row label{
+    color: green;
+    font-size: 1em;
+    width: 150px;
 }
