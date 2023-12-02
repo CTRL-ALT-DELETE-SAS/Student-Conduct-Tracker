@@ -64,3 +64,11 @@ def searchStudentPage():
 @index_views.route('/studentInformation', methods = ['GET'])
 def studentInformationPage():
     return render_template('studentInformation.html')
+
+@index_views.route('/registerAdmin', methods = ['GET'])
+def registerAdminPage():
+    return render_template('registerAdmin.html')
+
+@index_views.route('/registerStaff', methods = ['GET'])
+def registerStaffPage():
+    return render_template('registerStaff.html')
