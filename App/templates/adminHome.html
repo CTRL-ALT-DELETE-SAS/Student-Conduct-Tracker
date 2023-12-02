@@ -1,16 +1,31 @@
 {% extends "layout.html" %}
 {% block title %}Student Conduct Tracker{% endblock %}
-{% block page %}Staff Home Page{% endblock %}
+{% block page %}Admin Home{% endblock %}
 
 {{ super() }}
+
+{% block link %}
+    <ul id = "nav-mobile" class = "right">
+        <li><a href = "/">Log Out</a></li>
+    </ul>
+{% endblock %}
 
 {% block content %}
 <section>
     <div class="generic-form-box" id = "staff-home">
         
-        <div class="staffHome-form-value">
+        <div class="home-form-value">
             
             <div style="display: flex; justify-content: center; height: 12vh; margin-top: 8vh;">
+                <form action="/addStudent" method="get">
+                    <div class="card-action">
+                        <a href="/addStudent"></a>
+                        <button class="blue text-white btn">Add Student</button>          
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: flex; justify-content: center; height: 12vh; margin-top: vh;">
                 <form action="/searchStudent" method="get">
                     <div class="card-action">
                         <a href="/searchStudent"></a>
@@ -20,19 +35,10 @@
             </div>
 
             <div style="display: flex; justify-content: center; height: 12vh; margin-top: vh;">
-                <form action="/logReview" method="get">
+                <form action="/updateStudent" method="get">
                     <div class="card-action">
-                        <a href="/logReview"></a>
-                        <button class="blue text-white btn">Log Review</button>          
-                    </div>
-                </form>
-            </div>
-
-            <div style="display: flex; justify-content: center; height: 12vh; margin-top: vh;">
-                <form action="/karmaRanking" method="get">
-                    <div class="card-action">
-                        <a href="/karmaRanking"></a>
-                        <button class="blue text-white btn">View Karma Rankings</button>          
+                        <a href="/updateStudent"></a>
+                        <button class="blue text-white btn">Update Student</button>          
                     </div>
                 </form>
             </div>
