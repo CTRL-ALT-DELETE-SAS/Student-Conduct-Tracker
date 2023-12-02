@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for, session
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from flask_login import login_required, login_user, current_user, logout_user
-from App.models import staff
+from App.models import staff, User
 from datetime import datetime, timedelta
+from App.models.staff import Staff
 
 from.index import index_views
 
@@ -24,12 +25,25 @@ def identify_page():
 @auth_views.route('/login', methods=['POST'])
 def login_action():
     data = request.form
-    #email = data.get('email')
     staffuser = login(data['email'], data['password'])
-    existing_staffuser = staff.query.filter((staff.email == data['email']) & (staff.password == data['password'] )).first()
-    if existing_staffuser:
-         return redirect('/staffHome')
-    return redirect('/')
+    user = login(data['email'], data['password'])
+    if user:
+        session['logged_in'] = True
+        token = jwt_authenticate(data['ID'], data['password'])
+        return redirect('/staffHome')
+    else:
+        return redirect('/')
+    #existing_staffuser = staff.query.filter((staff.email == data['email']) & (staff.password == data['password'] )).first()
+    #if existing_staffuser:
+    '''email = data.get('email')
+    password = data.get('password')
+    staffuser = login(data['email'], data['password'])
+    existingstaffuser = staff.query.filter(email=email).first()
+    if existingstaffuser and staffuser.check_password(password):
+        return redirect('/staffHome')
+    else:
+        return redirect('/')'''
+    #email = data.get('email')
     #return 'bad username or password given', 401
 
 
